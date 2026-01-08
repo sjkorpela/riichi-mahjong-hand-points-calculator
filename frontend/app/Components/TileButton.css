@@ -1,0 +1,7 @@
+.tile {
+    width: 40px;
+    height: 60px;
+    border-radius: 5px;
+    border-width: 0;
+    border-bottom-width: 10px;
+}
