@@ -2,7 +2,7 @@
 
 const tileTypes = ["s1", "s2", "s3", "s4", "s5", "s5r", "s6", "s7", "s8", "s9", "m1", "m2", "m3", "m4", "m5", "m5r", "m6", "m7", "m8", "m9", "p1", "p2", "p3", "p4", "p5", "p5r", "p6", "p7", "p8", "p9", "we", "ws", "ww", "wn", "dg", "dr", "dw", ];
 const maxHandSize = 14;
-const maxDoraIndSize = 10;
+// const maxDoraIndSize = 10;
 const maxTileCount = 4;
 const max5TileCount = 3;
 const maxRed5TileCount = 1;
@@ -97,8 +97,8 @@ export default function Home() {
                 <h1 className="text-xl text-white font-bold">Hand</h1>
                 <Hand hand={hand} removeTileFromHand={removeTileFromHand} maxHandSize={maxHandSize} />
             </div>
-            <div className="flex items-start gap-3">
-                <div className="grid grid-cols-10 mt p-3 gap-1 bg-green-600 rounded-xl">
+            <div className="flex flex-wrap items-start gap-3">
+                <div className="grid grid-cols-10 p-3 gap-1 bg-green-600 rounded-xl">
                     {tileTypes.map((f, key) => {
                         let noMoreTile: boolean
                         // normally there's four copies of a tile,
@@ -114,7 +114,7 @@ export default function Home() {
                         />
                     })}
                 </div>
-                <div className="mt p-3 bg-green-600 rounded-xl">
+                <div className="p-3 bg-green-600 rounded-xl">
                     <h1 className="text-xl text-white font-bold">Round Wind</h1>
                     <WindSelect
                         wind={roundWind}
