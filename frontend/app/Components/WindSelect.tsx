@@ -1,22 +1,14 @@
-import {useState} from "react";
 import "./Tile.css";
 
 const winds = ["we", "ws", "ww", "wn"];
 
 interface WindSelectProps {
-    selectFunc: (wind: string) => void;
+    wind: string;
+    setWind: (wind: string) => void;
 }
 
-export default function WindSelect({selectFunc}: WindSelectProps) {
+export default function WindSelect({wind, setWind}: WindSelectProps) {
 
-    // move/connect to top layer?
-    const [wind, setWind] = useState<string>();
-    if (!wind) { selectWind("we"); }
-
-    function selectWind(w: string) {
-        setWind(w);
-        selectFunc(w);
-    }
     function tile(face: string, inactive?: boolean) {
         const base = "tile flex items-center justify-center";
         let colors = "bg-white border-b-orange-300 hover:border-b-amber-500 active:bg-neutral-300 active:border-b-orange-400";
@@ -37,7 +29,7 @@ export default function WindSelect({selectFunc}: WindSelectProps) {
                     {tile(w, true)}
                 </div>
             } else {
-                return <button onClick={() => selectWind(w)} key={key}>
+                return <button onClick={() => setWind(w)} key={key}>
                     {tile(w)}
                 </button>
             }
