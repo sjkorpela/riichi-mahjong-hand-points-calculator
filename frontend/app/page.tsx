@@ -4,6 +4,8 @@ const tileTypes = ["s1", "s2", "s3", "s4", "s5", "s5r", "s6", "s7", "s8", "s9", 
 const maxHandSize = 14;
 const maxDoraIndSize = 10;
 const maxTileCount = 4;
+const max5TileCount = 3;
+const maxRed5TileCount = 1;
 
 import {useEffect, useState} from "react";
 import Hand from "@/app/Components/Hand";
@@ -98,10 +100,17 @@ export default function Home() {
             <div className="flex items-start gap-3">
                 <div className="grid grid-cols-10 mt p-3 gap-1 bg-green-600 rounded-xl">
                     {tileTypes.map((f, key) => {
+                        let noMoreTile: boolean
+                        // normally there's four copies of a tile,
+                        // but because one five of every land is a red five
+                        // there can only be 3 fives and 1 red five
+                        if (f[2] == 'r') { noMoreTile = hand[f] >= maxRed5TileCount; }
+                        else if (f[1] == '5') { noMoreTile = hand[f] >= max5TileCount; }
+                        else { noMoreTile = hand[f] >= maxTileCount; }
                         return <TileButton
                             face={f}
                             clickFunc={() => addTileToHand(f)} key={key}
-                            inactive={handFull || hand[f] >= maxTileCount}
+                            inactive={handFull ||  noMoreTile}
                         />
                     })}
                 </div>
