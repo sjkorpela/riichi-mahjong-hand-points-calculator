@@ -14,7 +14,7 @@ export default function hand({ hand, removeTileFromHand, maxHandSize }: Props) {
 
     return (
         <div className="flex gap-1 flex-wrap">
-            {Object.keys(hand).map((f, key) => {
+            {Object.keys(hand).map((f) => {
                 return Array.from({length: hand[f]}).map((_, i) => {
                     tiles++;
                     return <TileButton
