@@ -1,4 +1,4 @@
-import "./Tile.css";
+import "@/app/CSS/Tile.css";
 
 const winds = ["we", "ws", "ww", "wn"];
 

@@ -1,5 +1,4 @@
-import {MouseEvent
-} from "react";
+import { MouseEvent } from "react";
 
 interface TileButtonProps {
     face?: string,
@@ -7,7 +6,7 @@ interface TileButtonProps {
     inactive?: boolean,
 }
 
-import "./Tile.css";
+import "@/app/CSS/Tile.css";
 export default function TileButton({face, addTile, inactive}: TileButtonProps) {
     function tile(inactive?: boolean) {
         const base = "tile flex items-center justify-center";
