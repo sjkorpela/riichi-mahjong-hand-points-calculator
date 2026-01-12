@@ -1,13 +1,19 @@
 "use client";
 
 const tileTypes = ["s1", "s2", "s3", "s4", "s5", "s5r", "s6", "s7", "s8", "s9", "m1", "m2", "m3", "m4", "m5", "m5r", "m6", "m7", "m8", "m9", "p1", "p2", "p3", "p4", "p5", "p5r", "p6", "p7", "p8", "p9", "we", "ws", "ww", "wn", "dg", "dr", "dw", ];
+
+// better way to do this??
+const allTiles: {[index: string]: number} = {};
+tileTypes.forEach((tile) => {
+    allTiles[tile] = 0;
+})
+
 const maxHandSize = 14;
 const maxDora = 10;
 const maxTileCount = 4;
-const max5TileCount = 3;
-const maxRed5TileCount = 1;
+const red5TileCount = 1;
 
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import Hand from "@/app/Components/Hand";
 import TileButton from "@/app/Components/TileButton";
 import WindSelect from "@/app/Components/WindSelect";
@@ -19,14 +25,14 @@ export default function Home() {
     // if true, tile select adds tiles to hand, if false adds to dora
     const [handFocus, setHandFocus] = useState<boolean>(true);
 
-    const [hand, setHand] = useState<{[index: string]: number}>({})
+    const [hand, setHand] = useState<{[index: string]: number}>(allTiles)
     const [handSize, setHandSize] = useState<number>(0);
     const handFull = handSize >= maxHandSize;
 
     const [dora, setDora] = useState<string[]>([])
     const doraFull = dora.length >= maxDora;
 
-    const [spentTiles, setSpentTiles] = useState<{[index: string]: number}>({})
+    const [spentTiles, setSpentTiles] = useState<{[index: string]: number}>(allTiles)
 
     const [roundWind, setRoundWind] = useState("we");
     const [seatWind, setSeatWind] = useState("we");
@@ -39,27 +45,12 @@ export default function Home() {
     const [lastTile, setLastTile] = useState<boolean>(false);
     const [afterKan, setAfterKan] = useState<boolean>(false);
 
-    // SCUFFED!!!!! find better solution, maybe to do this in state init
-    useEffect(()=>{
-        const allTiles: {[index: string]: number} = {};
-
-        tileTypes.map((tile) => {
-            allTiles[tile] = 0;
-        })
-
-        const a = () => {setSpentTiles(allTiles); setHand(allTiles);};
-        a();
-    }, [])
-
     function addTileToHand(tile: string) {
-        if (hand[tile] == undefined) {
-            setHand({...hand, [tile]: 1})
-            setSpentTiles({...spentTiles, [tile]: 1})
-        } else if (hand[tile] < maxTileCount) {
+        if (hand[tile] < maxTileCount) {
             setHand({...hand, [tile]: hand[tile] + 1})
             setSpentTiles({...spentTiles, [tile]: spentTiles[tile] + 1})
+            setHandSize(handSize + 1);
         }
-        setHandSize(handSize + 1);
     }
 
     function removeTileFromHand(tile: string) {
@@ -69,15 +60,10 @@ export default function Home() {
     }
 
     function addTileToDora(tile: string) {
-        if (doraFull) {
-            return;
-        }
-        if (spentTiles[tile] == undefined) {
-            setSpentTiles({...spentTiles, [tile]: 1})
-        } else if (hand[tile] < maxTileCount) {
+        if (hand[tile] < maxTileCount) {
             setSpentTiles({...spentTiles, [tile]: spentTiles[tile] + 1})
+            setDora([...dora, tile]);
         }
-        setDora([...dora, tile]);
     }
 
     function removeTileFromDora(index: number) {
@@ -92,13 +78,22 @@ export default function Home() {
             if (hand[tile] > 0) {trimmedHand[tile] = hand[tile]}
         })
 
+
+
         const calculationInfo = {
             hand: trimmedHand,
             roundWind: roundWind,
             seatWind: seatWind,
             doraIndicators: dora,
-            openHand: false,
-            flags: {riichi: true}
+            openHand: openHand,
+            flags: {
+                riichi: riichi,
+                ippatsu: ippatsu,
+                doubleRiichi: doubleRiichi,
+                tsumo: tsumo,
+                lastTile: lastTile,
+                afterKan: afterKan,
+            }
         }
 
         console.log("calculationInfo: ", calculationInfo);
@@ -117,19 +112,19 @@ export default function Home() {
                     <div className="p-3 bg-green-600 rounded-xl">
                         <h1 className="text-xl text-white font-bold">Tile Select</h1>
                         <div className="grid grid-cols-10 gap-1">
-                            {tileTypes.map((f, key) => {
+                            {tileTypes.map((face, key) => {
                                 let noMoreTile: boolean
                                 // normally there's four copies of a tile,
                                 // but because one five of every land is a red five
                                 // there can only be 3 fives and 1 red five
-                                if (f[2] == 'r') { noMoreTile = spentTiles[f] >= maxRed5TileCount; }
-                                else if (f[1] == '5') { noMoreTile = spentTiles[f] >= max5TileCount; }
-                                else { noMoreTile = spentTiles[f] >= maxTileCount; }
+                                if (face[2] == 'r') { noMoreTile = spentTiles[face] >= red5TileCount; }
+                                else if (face[1] == '5') { noMoreTile = spentTiles[face] >= maxTileCount - red5TileCount; }
+                                else { noMoreTile = spentTiles[face] >= maxTileCount; }
                                 return <TileButton
-                                    face={f}
-                                    addTile={() => handFocus? addTileToHand(f) : addTileToDora(f)}
+                                    face={face}
+                                    addTile={() => handFocus? addTileToHand(face) : addTileToDora(face)}
                                     key={key}
-                                    inactive={handFull || noMoreTile}
+                                    inactive={(handFocus && handFull) || (!handFocus && doraFull) || noMoreTile}
                                 />
                             })}
                         </div>
@@ -149,9 +144,7 @@ export default function Home() {
                     <div className="p-3 bg-green-600 rounded-xl">
                         <h1 className="text-xl text-white font-bold">Extra Han</h1>
                         <Boolean name={"Open Hand"} bool={openHand} updateBool={() => setOpenHand(!openHand)}/>
-                        {/*Riichi, Riichi Ippatsu, and Double Riichi can't be achieved with an open hand.*/}
                         <Boolean name={"Riichi"} bool={riichi} updateBool={() => setRiichi(!riichi)} blocked={openHand}/>
-                        {/*Riichi Ippatsu, and Double Riichi also can't be achieved without Riichi*/}
                         <Boolean name={"Ippatsu"} bool={ippatsu} updateBool={() => setIppatsu(!ippatsu)} blocked={openHand || !riichi}/>
                         <Boolean name={"Double Riichi"} bool={doubleRiichi} updateBool={() => setDoubleRiichi(!doubleRiichi)} blocked={openHand || !riichi}/>
                         <Boolean name={"Tsumo"} bool={tsumo} updateBool={() => setTsumo(!tsumo)}/>

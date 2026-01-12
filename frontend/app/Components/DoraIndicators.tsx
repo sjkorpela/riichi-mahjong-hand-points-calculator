@@ -16,6 +16,7 @@ export default function DoraIndicators({ dora, removeTileFromDora, maxDora }: Do
                 return <TileButton
                     face={f}
                     addTile={(e: MouseEvent) => {
+                        // stops removing a tile from selecting the bar for adding tiles
                         e.stopPropagation()
                         removeTileFromDora(key);
                     }}
