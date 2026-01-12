@@ -1,5 +1,6 @@
 import TileButton from "@/app/Components/TileButton";
 import EmptyTile from "@/app/Components/EmptyTile";
+import {MouseEvent} from "react";
 
 interface Props {
     hand: {[index: string]: number};
@@ -18,8 +19,9 @@ export default function hand({ hand, removeTileFromHand, maxHandSize }: Props) {
                     tiles++;
                     return <TileButton
                         face={f}
-                        addTile={() => {
-                            removeTileFromHand(f)
+                        addTile={(e: MouseEvent) => {
+                            e.stopPropagation()
+                            removeTileFromHand(f);
                         }}
                         key={i}
                     />

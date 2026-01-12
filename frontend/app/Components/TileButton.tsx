@@ -1,7 +1,9 @@
+import {MouseEvent
+} from "react";
 
 interface TileButtonProps {
     face?: string,
-    addTile: () => void,
+    addTile: (event: MouseEvent) => void,
     inactive?: boolean,
 }
 
@@ -24,7 +26,7 @@ export default function TileButton({face, addTile, inactive}: TileButtonProps) {
         return tile(inactive = true);
     } else {
         return (
-            <button onClick={addTile ??= () => alert("No clickFunc bruh")}>
+            <button onClick={addTile}>
                 {tile()}
             </button>
         )
