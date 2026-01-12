@@ -11,6 +11,7 @@ import {useEffect, useState} from "react";
 import Hand from "@/app/Components/Hand";
 import TileButton from "@/app/Components/TileButton";
 import WindSelect from "@/app/Components/WindSelect";
+import Boolean from "@/app/Components/Boolean";
 
 export default function Home() {
 
@@ -37,6 +38,14 @@ export default function Home() {
 
     const [roundWind, setRoundWind] = useState("we");
     const [seatWind, setSeatWind] = useState("we");
+
+    const [openHand, setOpenHand] = useState<boolean>(false);
+    const [riichi, setRiichi] = useState<boolean>(false);
+    const [ippatsu, setIppatsu] = useState<boolean>(false);
+    const [doubleRiichi, setDoubleRiichi] = useState<boolean>(false);
+    const [tsumo, setTsumo] = useState<boolean>(false);
+    const [lastTile, setLastTile] = useState<boolean>(false);
+    const [afterKan, setAfterKan] = useState<boolean>(false);
 
     // SCUFFED!!!!! find better solution, maybe to do this in state init
     useEffect(()=>{
@@ -92,7 +101,7 @@ export default function Home() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen items-center justify-center gap-3 bg-green-400">
+        <div className="flex flex-col min-h-screen items-center justify-center gap-3 bg-green-400 min-w-175">
             <div className="p-3 bg-green-600 rounded-xl">
                 <h1 className="text-xl text-white font-bold">Hand</h1>
                 <Hand hand={hand} removeTileFromHand={removeTileFromHand} maxHandSize={maxHandSize} />
@@ -109,22 +118,30 @@ export default function Home() {
                         else { noMoreTile = hand[f] >= maxTileCount; }
                         return <TileButton
                             face={f}
-                            clickFunc={() => addTileToHand(f)} key={key}
+                            addTile={() => addTileToHand(f)} key={key}
                             inactive={handFull ||  noMoreTile}
                         />
                     })}
                 </div>
-                <div className="p-3 bg-green-600 rounded-xl">
-                    <h1 className="text-xl text-white font-bold">Round Wind</h1>
-                    <WindSelect
-                        wind={roundWind}
-                        setWind={setRoundWind}
-                    />
-                    <h1 className="text-xl text-white font-bold">Seat Wind</h1>
-                    <WindSelect
-                        wind={seatWind}
-                        setWind={setSeatWind}
-                    />
+                <div className="flex flex-col gap-3">
+                    <div className="p-3 bg-green-600 rounded-xl">
+                        <h1 className="text-xl text-white font-bold">Round Wind</h1>
+                        <WindSelect wind={roundWind} updateWind={setRoundWind}/>
+                        <h1 className="text-xl text-white font-bold">Seat Wind</h1>
+                        <WindSelect wind={seatWind} updateWind={setSeatWind}/>
+                    </div>
+                    <div className="p-3 bg-green-600 rounded-xl">
+                        <h1 className="text-xl text-white font-bold">Extra Han</h1>
+                        <Boolean name={"Open Hand"} bool={openHand} updateBool={() => setOpenHand(!openHand)}/>
+                        {/*Riichi, Riichi Ippatsu, and Double Riichi can't be achieved with an open hand.*/}
+                        <Boolean name={"Riichi"} bool={riichi} updateBool={() => setRiichi(!riichi)} blocked={openHand}/>
+                        {/*Riichi Ippatsu, and Double Riichi also can't be achieved without Riichi*/}
+                        <Boolean name={"Ippatsu"} bool={ippatsu} updateBool={() => setIppatsu(!ippatsu)} blocked={openHand || !riichi}/>
+                        <Boolean name={"Double Riichi"} bool={doubleRiichi} updateBool={() => setDoubleRiichi(!doubleRiichi)} blocked={openHand || !riichi}/>
+                        <Boolean name={"Tsumo"} bool={tsumo} updateBool={() => setTsumo(!tsumo)}/>
+                        <Boolean name={"Last Tile"} bool={lastTile} updateBool={() => setLastTile(!lastTile)}/>
+                        <Boolean name={"After a Kan"} bool={afterKan} updateBool={() => setAfterKan(!afterKan)}/>
+                    </div>
                 </div>
             </div>
         </div>

@@ -18,7 +18,7 @@ export default function hand({ hand, removeTileFromHand, maxHandSize }: Props) {
                     tiles++;
                     return <TileButton
                         face={f}
-                        clickFunc={() => {
+                        addTile={() => {
                             removeTileFromHand(f)
                         }}
                         key={i}

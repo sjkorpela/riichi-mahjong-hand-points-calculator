@@ -1,12 +1,12 @@
 
 interface TileButtonProps {
     face?: string,
-    clickFunc: () => void,
+    addTile: () => void,
     inactive?: boolean,
 }
 
 import "./Tile.css";
-export default function TileButton({face, clickFunc, inactive}: TileButtonProps) {
+export default function TileButton({face, addTile, inactive}: TileButtonProps) {
     function tile(inactive?: boolean) {
         const base = "tile flex items-center justify-center";
         let colors = "bg-white border-b-orange-300 hover:border-b-amber-500 active:bg-neutral-300 active:border-b-orange-400";
@@ -24,7 +24,7 @@ export default function TileButton({face, clickFunc, inactive}: TileButtonProps)
         return tile(inactive = true);
     } else {
         return (
-            <button onClick={clickFunc ??= () => alert("No clickFunc bruh")}>
+            <button onClick={addTile ??= () => alert("No clickFunc bruh")}>
                 {tile()}
             </button>
         )

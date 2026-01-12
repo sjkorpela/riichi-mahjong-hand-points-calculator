@@ -4,10 +4,10 @@ const winds = ["we", "ws", "ww", "wn"];
 
 interface WindSelectProps {
     wind: string;
-    setWind: (wind: string) => void;
+    updateWind: (wind: string) => void;
 }
 
-export default function WindSelect({wind, setWind}: WindSelectProps) {
+export default function WindSelect({wind, updateWind}: WindSelectProps) {
 
     function tile(face: string, inactive?: boolean) {
         const base = "tile flex items-center justify-center";
@@ -29,7 +29,7 @@ export default function WindSelect({wind, setWind}: WindSelectProps) {
                     {tile(w, true)}
                 </div>
             } else {
-                return <button onClick={() => setWind(w)} key={key}>
+                return <button onClick={() => updateWind(w)} key={key}>
                     {tile(w)}
                 </button>
             }
