@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.servlet.function.ServerResponse.status;
 
 @RestController
-public class RequestController {
+public class PointsController {
 
     @GetMapping("/points")
     public ResponseEntity<?> CalculatePoints(@RequestBody PointsRequestBody body) {
