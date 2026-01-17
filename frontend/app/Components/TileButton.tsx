@@ -2,21 +2,23 @@ import { MouseEvent } from "react";
 
 interface TileButtonProps {
     face?: string,
-    addTile: (event: MouseEvent) => void,
+    whenClicked: (event: MouseEvent) => void,
     inactive?: boolean,
+    big?: boolean,
 }
 
-import "@/app/CSS/Tile.css";
-export default function TileButton({face, addTile, inactive}: TileButtonProps) {
+import "@/app/CSS/Tiles.css";
+export default function TileButton({face, whenClicked, inactive, big}: TileButtonProps) {
     function tile(inactive?: boolean) {
-        const base = "tile flex items-center justify-center";
+        let base = "tile flex items-center justify-center";
         let colors = "bg-white border-b-orange-300 hover:border-b-amber-500 active:bg-neutral-300 active:border-b-orange-400";
 
+        if (big) { base += " big"}
         if (inactive) { colors = "bg-white border-b-gray-400"; }
 
         return (
             <div className={`${base} ${colors}`}>
-                <a>{face ??= "xx"}</a>
+                <h1 className="select-none">{face ??= "xx"}</h1>
             </div>
         )
     }
@@ -25,7 +27,7 @@ export default function TileButton({face, addTile, inactive}: TileButtonProps) {
         return tile(inactive = true);
     } else {
         return (
-            <button onClick={addTile}>
+            <button onClick={whenClicked} >
                 {tile()}
             </button>
         )

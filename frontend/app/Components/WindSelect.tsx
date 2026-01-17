@@ -1,4 +1,4 @@
-import "@/app/CSS/Tile.css";
+import "@/app/CSS/Tiles.css";
 
 const winds = ["we", "ws", "ww", "wn"];
 
@@ -17,7 +17,7 @@ export default function WindSelect({wind, updateWind}: WindSelectProps) {
 
         return (
             <div className={`${base} ${colors}`}>
-                <a>{face ??= "xx"}</a>
+                <h1 className="select-none">{face ??= "xx"}</h1>
             </div>
         )
     }

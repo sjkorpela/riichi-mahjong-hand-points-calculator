@@ -1,6 +1,11 @@
-import "@/app/CSS/EmptyTile.css";
-export default function EmptyTile() {
+import "@/app/CSS/Tiles.css";
+
+interface EmptyTileProps {
+    big?: boolean,
+}
+
+export default function EmptyTile({big}: EmptyTileProps) {
     return (
-        <div className="empty-tile flex items-center justify-center  border-green-500"></div>
+        <div className={`${big ? "big" : ""} empty tile`}></div>
     )
 }
