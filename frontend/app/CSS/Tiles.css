@@ -1,8 +1,8 @@
 :root {
     --tile-width: 48px;
     --tile-height: 60px;
-    --tile-side: 15px;
-    --tile-full-height: calc(var(--tile-height) + var(--tile-side));
+    --tile-side: 10px;
+    --tile-full-height: calc(var(--tile-height) + 15px);
     --big-tile-mult: 1.3;
 }
 

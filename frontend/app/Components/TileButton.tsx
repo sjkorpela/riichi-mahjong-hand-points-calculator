@@ -1,4 +1,5 @@
-import { MouseEvent } from "react";
+import {GetFaceVerbose} from "@/app/Util";
+
 
 interface TileButtonProps {
     face?: string,
@@ -8,6 +9,9 @@ interface TileButtonProps {
 }
 
 import "@/app/CSS/Tiles.css";
+import { MouseEvent } from "react";
+import Image from 'next/image'
+
 export default function TileButton({face, whenClicked, inactive, big}: TileButtonProps) {
     function tile(inactive?: boolean) {
         let base = "tile flex items-center justify-center";
@@ -16,9 +20,12 @@ export default function TileButton({face, whenClicked, inactive, big}: TileButto
         if (big) { base += " big"}
         if (inactive) { colors = "bg-white border-b-gray-400"; }
 
+        face = face ?? "xx";
+        const faceVerbose = GetFaceVerbose(face);
+
         return (
             <div className={`${base} ${colors}`}>
-                <h1 className="select-none">{face ??= "xx"}</h1>
+                <Image src={`/images/${face}.svg`} alt={faceVerbose} width={48} height={60} className="pointer-events-none"/>
             </div>
         )
     }

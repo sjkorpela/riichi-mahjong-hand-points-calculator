@@ -27,7 +27,7 @@ import DoraIndicators from "@/app/Components/DoraIndicators";
 export default function Home() {
 
     // if true, tile select adds tiles to hand, if false adds to dora
-    const [tileSelectFocus, setTileSelectFocus] = useState<string | null>(null);
+    const [tileSelectFocus, setTileSelectFocus] = useState<string | null>("H");
 
     function focusFunc(focus: string | null) {
         switch (focus) {
@@ -186,6 +186,10 @@ export default function Home() {
                         <h1 className="text-2xl text-white font-bold pb-1">Win Declaration</h1>
                         <FancyBoolean trueOption={"Tsumo"} falseOption={"Ron"} bool={tsumo} updateBool={() => setTsumo(!tsumo)} flipOptions={true}/>
                     </div>
+                    <div className="p-3 bg-green-600 rounded-xl justify-center">
+                        <h1 className="text-2xl text-white font-bold pb-1">Hand State</h1>
+                        <FancyBoolean trueOption={"Open"} falseOption={"Closed"} bool={openHand} updateBool={() => setOpenHand(!openHand)} flipOptions={true}/>
+                    </div>
                     <div className="p-3 bg-green-600 rounded-xl">
                         <h1 className="text-2xl text-white font-bold pb-1">Round Wind</h1>
                         <WindSelect wind={roundWind} updateWind={setRoundWind}/>
@@ -194,7 +198,6 @@ export default function Home() {
                     </div>
                     <div className="p-3 bg-green-600 rounded-xl">
                         <h1 className="text-2xl text-white font-bold pb-1">Extra Han</h1>
-                        <Boolean name={"Open Hand"} bool={openHand} updateBool={() => setOpenHand(!openHand)}/>
                         <Boolean name={"Riichi"} bool={riichi} updateBool={() => setRiichi(!riichi)} blocked={openHand}/>
                         <Boolean name={"Ippatsu"} bool={ippatsu} updateBool={() => setIppatsu(!ippatsu)} blocked={openHand || !riichi}/>
                         <Boolean name={"Double Riichi"} bool={doubleRiichi} updateBool={() => setDoubleRiichi(!doubleRiichi)} blocked={openHand || !riichi}/>

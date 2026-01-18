@@ -30,7 +30,7 @@ export default function Boolean({name, bool, updateBool, blocked}: BooleanProps)
         return (
             <div className="flex justify-between content-center">
                 <h1 className="text-xl decoration-2 text-white font-bold">{name}</h1>
-                <button onClick={updateBool} className={"min-w-12 h-5 flex m-1 rounded-full content-center bg-red-400 hover:bg-red-500 flex-row"}>
+                <button onClick={updateBool} className={"min-w-12 h-5 flex m-1 rounded-full content-center bg-red-400 hover:bg-red-300 flex-row"}>
                     <div className="min-h-full min-w-5 bg-white rounded-full"/>
                 </button>
             </div>
