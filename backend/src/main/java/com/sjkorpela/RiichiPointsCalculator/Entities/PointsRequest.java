@@ -1,5 +1,6 @@
 package com.sjkorpela.RiichiPointsCalculator.Entities;
 
+import com.sjkorpela.RiichiPointsCalculator.Enums.Suit;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Tile;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Wind;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
@@ -49,10 +50,12 @@ public class PointsRequest {
 
     private ArrayList<Yaku> yaku;
     private Boolean yakumanAchieved;
+    private Suit flushSuit;
 
     public void initalizeOtherFields() {
         yaku = new ArrayList<Yaku>();
         yakumanAchieved = false;
+        flushSuit = null;
     }
 
     public List<Tile> getFullHandAsList() {

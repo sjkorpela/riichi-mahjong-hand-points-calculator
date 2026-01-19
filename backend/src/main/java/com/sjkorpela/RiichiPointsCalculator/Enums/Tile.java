@@ -48,7 +48,7 @@ public enum Tile {
     ;
 
     private final Suit suit;
-    private final Integer value;
+    private final int value;
     private final Type type;
     private final String readableName;
     private final Boolean red;
@@ -84,9 +84,9 @@ public enum Tile {
                 this.type = Type.Honor;
                 break;
             default:
-                this.suit = Suit.Debug;
+                this.suit = null;
                 this.value = 0;
-                this.type = Type.Debug;
+                this.type = null;
                 break;
         }
 

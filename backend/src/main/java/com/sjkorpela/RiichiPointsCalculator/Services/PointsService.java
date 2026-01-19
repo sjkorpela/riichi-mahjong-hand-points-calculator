@@ -7,10 +7,19 @@ public class PointsService {
 
     public static void getYaku(PointsRequest request) {
 
-        // check flags based yaku, possible yakuman
-        YakuService.checkFlagsYaku(request);
+        YakuService.checkFlagsYaku(request); // possible yakuman
+        YakuService.checkThirteenOrphans(request); // possible yakuman
 
-        // check for 13o
-        YakuService.checkThirteenOrphans(request);
+        // If Yakuman is achieved, all base Yaku can be skipped
+        boolean yakuman = request.getYakumanAchieved();
+
+        YakuService.checkFlushYaku(request);
+
+        // Some yaku require a flush and some are incompatible with flushes
+        boolean fullFlush = request.getYaku().contains(Yaku.FullFlush);
+        boolean halfFlush = request.getYaku().contains(Yaku.HalfFlush);
+
+        if (fullFlush) { YakuService.checkForNineGates(request); } // possible yakuman
+        if (fullFlush || halfFlush) { YakuService.checkForAllGreen(request); } // possible yakuman
     }
 }

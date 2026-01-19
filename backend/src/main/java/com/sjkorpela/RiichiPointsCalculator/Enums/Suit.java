@@ -6,5 +6,4 @@ public enum Suit {
     Pin,
     Wind,
     Dragon,
-    Debug,
 }

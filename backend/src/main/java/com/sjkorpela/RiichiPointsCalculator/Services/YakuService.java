@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 public class YakuService {
     public static void checkFlagsYaku(PointsRequest request) {
+        System.out.println("Checking for flags...");
 
         if (request.getFlags().getOrDefault("blessedHand", false)) {
             request.getYaku().add(Yaku.BlessedHand);
@@ -28,6 +29,8 @@ public class YakuService {
     }
 
     public static void checkThirteenOrphans(PointsRequest request) {
+        System.out.println("Checking for Thirteen Orphans...");
+
         // get all orphans aka all terminal and honor tiles
         List<Tile> orphans = Stream.concat(
                 Tile.getAllTilesByType(Type.Terminal).stream(),
@@ -69,5 +72,92 @@ public class YakuService {
             request.getYaku().add(Yaku.ThirteenOrphans);
             request.setYakumanAchieved(true);
         }
+    }
+
+    public static void checkFlushYaku(PointsRequest request) {
+        System.out.println("Checking for flushes...");
+
+        List<Tile> hand = request.getFullHandAsList();
+
+        boolean hasHonors = false;
+        Suit suit = null;
+
+        for (Tile tile : hand) {
+            if (!hasHonors && tile.getType() == Type.Honor) {
+                hasHonors = true;
+            } else if (suit == null && tile.getType() != Type.Honor) {
+                suit = tile.getSuit();
+            } else if (suit != null && tile.getType() != Type.Honor && tile.getSuit() != suit) {
+                return;
+            }
+        }
+
+        // save for later
+        request.setFlushSuit(suit);
+
+        // if hand has honors it's a half flush, otherwise it's a full flush
+        if (hasHonors) {
+            request.getYaku().add(Yaku.HalfFlush);
+        } else {
+            request.getYaku().add(Yaku.FullFlush);
+        }
+    }
+
+    public static void checkForNineGates(PointsRequest request) {
+        System.out.println("Checking for Nine Gates...");
+
+        List<Tile> gates = Tile.getAllTilesBySuit(request.getFlushSuit());
+
+        Tile missing = null;
+
+        for (Tile gate : gates) {
+            int amount = request.getHand().getOrDefault(gate, 0);
+
+            System.out.println(gate);
+
+            System.out.println("Terminal short: " + (gate.getType() == Type.Terminal && amount <= 2 && request.getWinningTile() != gate));
+            // 9g requires three of both terminals but one can be the winning tile
+            if (gate.getType() == Type.Terminal && amount <= 2 && request.getWinningTile() != gate) { return; }
+
+            System.out.println("Missing but not winning: " + (missing != null && request.getWinningTile().getValue() != missing.getValue()));
+            // if a tile is missing but not the winning tile, hand can't be 9n
+            if (missing != null && request.getWinningTile().getValue() != missing.getValue() ) { return; }
+
+            // check if missing tile is 5 and current tile is r5 and is
+            // and if so mark 5 as not missing
+            System.out.println("Red gate replaces missing: " + (gate.getRed() && missing != null && missing.getValue() == gate.getValue() && amount > 0));
+            if (gate.getRed() && missing != null && missing.getValue() == gate.getValue() && amount > 0) {
+                missing = null;
+            }
+
+            System.out.println("Double missing: " + (missing != null && amount == 0));
+            if (missing != null && amount == 0 && missing.getValue() != gate.getValue()) { return; }
+
+            System.out.println("Found missing: " + (missing == null && amount == 0 && !gate.getRed()));
+            if (missing == null && amount == 0 && !gate.getRed()) { missing = gate; }
+        }
+
+        // loop fail states:
+            // hand has less than 3 of a terminal, but the winning tile isn't the missing terminal
+            // hand has a missing simple, but the winning tile isn't that missing simple
+            // hand has a missing simple, and discovers another missing simple
+        // so, hand must have:
+            // 3 of both terminals, or 2 of one terminal with the third as the winning tile
+            // one missing tile that is the winning tile
+            // at most one missing tile of 1-9
+        // so everything should be covered
+
+        // if no tiles are missing, hand is t9n, otherwise only 9n
+        if (missing == null) {
+            request.getYaku().add(Yaku.TrueNineGates);
+            request.setYakumanAchieved(true);
+        } else {
+            request.getYaku().add(Yaku.NineGates);
+            request.setYakumanAchieved(true);
+        }
+    }
+
+    public static void checkForAllGreen(PointsRequest request) {
+
     }
 }

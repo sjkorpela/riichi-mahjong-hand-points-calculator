@@ -38,7 +38,7 @@ public enum Yaku {
 
 
     // 6 Han
-    FulLFLush,
+    FullFlush,
 
 
     // Yakuman

@@ -4,5 +4,4 @@ public enum Type {
     Simple,
     Terminal,
     Honor,
-    Debug,
 }
