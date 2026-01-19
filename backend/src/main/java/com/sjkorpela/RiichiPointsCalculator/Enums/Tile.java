@@ -2,6 +2,9 @@ package com.sjkorpela.RiichiPointsCalculator.Enums;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Getter
 public enum Tile {
     s1("Sou 1"),
@@ -88,6 +91,14 @@ public enum Tile {
         }
 
 //        System.out.println(this + ": " + suit + ", " + ", " + value + ", " + type + ", " + readableName + ", " + red);
+    }
+
+    public static List<Tile> getAllTilesBySuit(Suit target) {
+        return Arrays.stream(Tile.values()).filter(tile -> tile.suit == target).toList();
+    }
+
+    public static List<Tile> getAllTilesByType(Type target) {
+        return Arrays.stream(Tile.values()).filter(tile -> tile.type == target).toList();
     }
 
 }

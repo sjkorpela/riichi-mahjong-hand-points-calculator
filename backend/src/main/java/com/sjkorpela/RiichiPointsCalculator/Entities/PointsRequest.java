@@ -2,6 +2,7 @@ package com.sjkorpela.RiichiPointsCalculator.Entities;
 
 import com.sjkorpela.RiichiPointsCalculator.Enums.Tile;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Wind;
+import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,10 +47,12 @@ public class PointsRequest {
     private Boolean openHand;
     private HashMap<String, Boolean> flags;
 
-    private List<Yaku> yaku;
+    private ArrayList<Yaku> yaku;
+    private Boolean yakumanAchieved;
 
     public void initalizeOtherFields() {
-        yaku = new ArrayList<>();
+        yaku = new ArrayList<Yaku>();
+        yakumanAchieved = false;
     }
 
     public List<Tile> getFullHandAsList() {

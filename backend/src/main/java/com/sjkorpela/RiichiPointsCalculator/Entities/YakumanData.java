@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class Yakuman extends Yaku {
+public class YakumanData extends YakuData {
     private Integer yakumanCount;
 
-    public Yakuman(
+    public YakumanData(
             String englishName,
             String japaneseName,
             String description,

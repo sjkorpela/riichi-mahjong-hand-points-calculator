@@ -20,7 +20,7 @@ public class PointsController {
             request.initalizeOtherFields();
             PointsService.getYaku(request);
             return new ResponseEntity<>(request, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());

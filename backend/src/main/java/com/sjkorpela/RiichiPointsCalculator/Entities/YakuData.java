@@ -8,7 +8,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class Yaku {
+public class YakuData {
     private String englishName;
     private String japaneseName;
     private String description;

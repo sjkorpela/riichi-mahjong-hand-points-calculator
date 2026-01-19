@@ -1,45 +1,73 @@
 package com.sjkorpela.RiichiPointsCalculator.Services;
 
 import com.sjkorpela.RiichiPointsCalculator.Entities.PointsRequest;
-import com.sjkorpela.RiichiPointsCalculator.Entities.Yaku;
-import com.sjkorpela.RiichiPointsCalculator.Entities.Yakuman;
+import com.sjkorpela.RiichiPointsCalculator.Enums.Suit;
+import com.sjkorpela.RiichiPointsCalculator.Enums.Tile;
+import com.sjkorpela.RiichiPointsCalculator.Enums.Type;
+import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
 
-import java.util.*;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class YakuService {
-    public static void getFlagsYaku(PointsRequest request) {
+    public static void checkFlagsYaku(PointsRequest request) {
+
         if (request.getFlags().getOrDefault("blessedHand", false)) {
-            request.getYaku().add(new Yakuman(
-                    "Blessing of Heaven/Earth",
-                    "Tenhou / Chiihou",
-                    "Win by starting with a ready hand as the dealer, or by drawing a winning tile on your first draw as a non-dealer.",
-                    13,
-                    13,
-                    request.getFullHandAsList(),
-                    1
-            ));
+            request.getYaku().add(Yaku.BlessedHand);
+            request.setYakumanAchieved(true);
+            return;
         }
 
         if (request.getFlags().getOrDefault("afterKan", false)) {
-            request.getYaku().add(new Yaku(
-                    "After/Robbing a Kan",
-                    "Rinshan kaihou / Chankan",
-                    "Win by drawing your winning tile from the Dead Wall after a Kan, or by calling Ron on another player upgrading an Open Triplet into an Added Kan of your winning tile.",
-                    1,
-                    1,
-                    Collections.singletonList(request.getWinningTile())
-            ));
+            request.getYaku().add(Yaku.AfterKan);
         }
 
         if (request.getFlags().getOrDefault("lastTile", false)) {
-            request.getYaku().add(new Yaku(
-                    "Under the Sea/River",
-                    "Haitei / Houtei",
-                    "Win by drawing your winning tile from the last tile in the Live Wall, or by calling Ron on the last discard of the hand.",
-                    1,
-                    1,
-                    Collections.singletonList(request.getWinningTile())
-            ));
+            request.getYaku().add(Yaku.LastTile);
+        }
+    }
+
+    public static void checkThirteenOrphans(PointsRequest request) {
+        // get all orphans aka all terminal and honor tiles
+        List<Tile> orphans = Stream.concat(
+                Tile.getAllTilesByType(Type.Terminal).stream(),
+                Tile.getAllTilesByType(Type.Honor).stream()
+        ).toList();
+
+        // check which orphan is paired and which one is missing
+        Tile pair = null;
+        Tile missing = null;
+
+        for (Tile orphan : orphans) {
+            int amount = request.getHand().getOrDefault(orphan, 0);
+
+            // if there's more than 2 of any orphan, 13o isn't possible
+            if (amount > 2) { return; }
+
+            // if multiple orphans are paired or missing, 13o is not possible
+            if (missing != null && amount == 0) { return; }
+            else if (pair != null && amount == 2) { return; }
+            else if (missing == null && amount == 0) { missing = orphan; }
+            else if (pair == null && amount == 2) { pair = orphan; }
+        }
+
+        // if only one is null, something went wrong
+        if (pair == null ^ missing == null) { throw new IllegalArgumentException("Hand isn't valid."); }
+
+        // if no orphans were paired or missing, and winning tile is an orphan, hand is 13w13o
+        // only pair null needs to be checked because of above check
+        if (pair == null && orphans.contains(request.getWinningTile())) {
+            request.getYaku().add(Yaku.ThirteenWaitThirteenOrphans);
+            request.setYakumanAchieved(true);
+            return;
+        }
+
+        // if the winning tile isn't the missing tile, the hand can't be valid
+        // otherwise hand is 13o
+        if (request.getWinningTile() != missing) { throw new IllegalArgumentException("Hand isn't valid."); }
+        else {
+            request.getYaku().add(Yaku.ThirteenOrphans);
+            request.setYakumanAchieved(true);
         }
     }
 }
