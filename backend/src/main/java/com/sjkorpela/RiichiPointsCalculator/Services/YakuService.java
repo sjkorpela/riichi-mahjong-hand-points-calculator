@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class YakuService {
     public static void checkFlagsYaku(PointsRequest request) {
-        System.out.println("Checking for flags...");
+//        System.out.println("Checking for flags...");
 
         if (request.getFlags().getOrDefault("blessedHand", false)) {
             request.getYaku().add(Yaku.BlessedHand);
@@ -29,7 +29,7 @@ public class YakuService {
     }
 
     public static void checkThirteenOrphans(PointsRequest request) {
-        System.out.println("Checking for Thirteen Orphans...");
+//        System.out.println("Checking for Thirteen Orphans...");
 
         // get all orphans aka all terminal and honor tiles
         List<Tile> orphans = Stream.concat(
@@ -75,7 +75,7 @@ public class YakuService {
     }
 
     public static void checkFlushYaku(PointsRequest request) {
-        System.out.println("Checking for flushes...");
+//        System.out.println("Checking for flushes...");
 
         List<Tile> hand = request.getFullHandAsList();
 
@@ -104,36 +104,38 @@ public class YakuService {
     }
 
     public static void checkForNineGates(PointsRequest request) {
-        System.out.println("Checking for Nine Gates...");
+//        System.out.println("Checking for Nine Gates...");
 
         List<Tile> gates = Tile.getAllTilesBySuit(request.getFlushSuit());
 
         Tile missing = null;
 
+        // this got a bit messy, maybe because am tired, nts: read through this sometime
+
         for (Tile gate : gates) {
             int amount = request.getHand().getOrDefault(gate, 0);
 
-            System.out.println(gate);
+//            System.out.println(gate);
 
-            System.out.println("Terminal short: " + (gate.getType() == Type.Terminal && amount <= 2 && request.getWinningTile() != gate));
+//            System.out.println("Terminal short: " + (gate.getType() == Type.Terminal && amount <= 2 && request.getWinningTile() != gate));
             // 9g requires three of both terminals but one can be the winning tile
             if (gate.getType() == Type.Terminal && amount <= 2 && request.getWinningTile() != gate) { return; }
 
-            System.out.println("Missing but not winning: " + (missing != null && request.getWinningTile().getValue() != missing.getValue()));
+//            System.out.println("Missing but not winning: " + (missing != null && request.getWinningTile().getValue() != missing.getValue()));
             // if a tile is missing but not the winning tile, hand can't be 9n
             if (missing != null && request.getWinningTile().getValue() != missing.getValue() ) { return; }
 
             // check if missing tile is 5 and current tile is r5 and is
             // and if so mark 5 as not missing
-            System.out.println("Red gate replaces missing: " + (gate.getRed() && missing != null && missing.getValue() == gate.getValue() && amount > 0));
+//            System.out.println("Red gate replaces missing: " + (gate.getRed() && missing != null && missing.getValue() == gate.getValue() && amount > 0));
             if (gate.getRed() && missing != null && missing.getValue() == gate.getValue() && amount > 0) {
                 missing = null;
             }
 
-            System.out.println("Double missing: " + (missing != null && amount == 0));
+//            System.out.println("Double missing: " + (missing != null && amount == 0));
             if (missing != null && amount == 0 && missing.getValue() != gate.getValue()) { return; }
 
-            System.out.println("Found missing: " + (missing == null && amount == 0 && !gate.getRed()));
+//            System.out.println("Found missing: " + (missing == null && amount == 0 && !gate.getRed()));
             if (missing == null && amount == 0 && !gate.getRed()) { missing = gate; }
         }
 
