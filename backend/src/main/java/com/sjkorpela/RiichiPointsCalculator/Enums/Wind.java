@@ -1,4 +1,4 @@
-package com.sjkorpela.RiichiPointsCalculator;
+package com.sjkorpela.RiichiPointsCalculator.Enums;
 
 public enum Wind {
     we,
