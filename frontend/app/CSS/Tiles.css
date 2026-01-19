@@ -1,0 +1,26 @@
+:root {
+    --tile-width: 48px;
+    --tile-height: 60px;
+    --tile-side: 10px;
+    --tile-full-height: calc(var(--tile-height) + 15px);
+    --big-tile-mult: 1.3;
+}
+
+.tile {
+    width: var(--tile-width);
+    height: var(--tile-full-height);
+    border-bottom-width: var(--tile-side);
+    border-radius: 5px;
+}
+
+.empty {
+    border-width: 5px;
+    border-bottom-width: var(--tile-side);
+    border-color: var(--color-green-500);
+}
+
+.big {
+    width: calc(var(--tile-width) * var(--big-tile-mult));
+    height: calc(var(--tile-full-height) * var(--big-tile-mult));
+    border-bottom-width: calc(var(--tile-side) * var(--big-tile-mult));
+}

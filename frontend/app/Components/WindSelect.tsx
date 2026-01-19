@@ -1,4 +1,6 @@
-import "@/app/CSS/Tile.css";
+import "@/app/CSS/Tiles.css";
+import {GetFaceVerbose} from "@/app/Util";
+import Image from "next/image";
 
 const winds = ["we", "ws", "ww", "wn"];
 
@@ -15,9 +17,12 @@ export default function WindSelect({wind, updateWind}: WindSelectProps) {
 
         if (inactive) { colors = "bg-white border-b-amber-500"; }
 
+        face = face ?? "xx";
+        const faceVerbose = GetFaceVerbose(face);
+
         return (
             <div className={`${base} ${colors}`}>
-                <a>{face ??= "xx"}</a>
+                <Image src={`/images/${face}.svg`} alt={faceVerbose} width={48} height={60} className="pointer-events-none"/>
             </div>
         )
     }
@@ -25,9 +30,9 @@ export default function WindSelect({wind, updateWind}: WindSelectProps) {
     return <div className="flex gap-1">
         {winds.map((w, key) => {
             if (w == wind) {
-                return <div key={key}>
+                return <button key={key}>
                     {tile(w, true)}
-                </div>
+                </button>
             } else {
                 return <button onClick={() => updateWind(w)} key={key}>
                     {tile(w)}
