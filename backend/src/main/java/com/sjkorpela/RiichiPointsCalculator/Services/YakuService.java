@@ -6,7 +6,9 @@ import com.sjkorpela.RiichiPointsCalculator.Enums.Tile;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Type;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class YakuService {
@@ -103,6 +105,28 @@ public class YakuService {
         }
     }
 
+    /**
+     * Seven Pairs is a yaku that requires:
+     * - The hand to be made of seven pairs
+     * <p>
+     * Seven Pairs is a unique hand structure, but is still compatible with:
+     * - All Honors (Yakuman)
+     * - All Terminals and Honors
+     * - All Simples
+     * - Half/Full Flush
+     * And of those some are also compatible.
+     *
+     * @param request object that the hand is checked from
+     */
+    public static void checkForSevenPairs(PointsRequest request) {
+
+        for (Map.Entry<Tile, Integer> entry : request.getFullHandAsMap().entrySet()) {
+            if (entry.getValue() != 2) { return; }
+        }
+
+        request.getYaku().add(Yaku.SevenPairs);
+    }
+
     public static void checkForNineGates(PointsRequest request) {
 //        System.out.println("Checking for Nine Gates...");
 
@@ -159,7 +183,106 @@ public class YakuService {
         }
     }
 
+    /**
+     * All Green is a Yakuman that requires:
+     * - The hand to be made entirely of tiles that only have green on them.
+     *      - These tiles are Sou 2-4, Sou 6, Sou 8, and the Green Dragon.
+     * <p>
+     * Some rulesets have different additional requirements, such as:
+     * - The hand must have the Green Dragon.
+     * - The hand must be four triplets and a pair.
+     * But they aren't accounted for here.
+     *
+     * @param request PointsRequest object that the hand is checked from
+     */
     public static void checkForAllGreen(PointsRequest request) {
+        ArrayList<Tile> greens = new ArrayList<>(List.of(new Tile[]{Tile.s2, Tile.s3, Tile.s4, Tile.s6, Tile.s8, Tile.dg}));
+        List<Tile> hand = request.getFullHandAsList();
+
+        for (Tile tile : hand) {
+            if (!greens.contains(tile)) { return; }
+        }
+
+        // it's possible that the hand isn't a valid 3-3-3-3-2 or 7p? nts: implement seq/tri/pair check
+
+        request.getYaku().add(Yaku.AllGreen);
+        request.setYakumanAchieved(true);
+    }
+
+    /**
+     * All Triplets is a Yaku that requires:
+     * - The hand to be made of 4 triplets and a pair.
+     *
+     * @param request object that the hand is checked from
+     */
+    public static void checkForAllTriplets(PointsRequest request) {
+
+        Tile pair = null;
+
+        for (Map.Entry<Tile, Integer> entry : request.getFullHandAsMap().entrySet()) {
+            if (entry.getValue() < 2 || entry.getValue() > 3) {
+                return;
+            }
+
+            if (entry.getValue() == 2 && pair == null) {
+                pair = entry.getKey();
+            } else if (entry.getValue() == 2) {
+                return;
+            }
+        }
+
+        request.getYaku().add(Yaku.AllTriplets);
+    }
+
+    /**
+     * All Simples is a Yaku that requires:
+     * - The hand to be made of all simples, aka no honors or terminals
+     * <p>
+     * All Simples is incompatible with all Yaku/Yakuman that require honors or terminals:
+     * - Thirteen Orphans
+     * - All Honors
+     * - All Terminals and Honors
+     * - All Terminals
+     * - Big/Little Three Dragons
+     * - Four Big/Little Winds
+     * - half/FUlly Outside Hand
+     * - Any Yakuhai (ex. Green Dragon or Seat Wind)
+     * So checking for it early cuts down on Yaku checks.
+     *
+     * @param request object that the hand is checked from
+     */
+    public static void checkForAllSimples(PointsRequest request) {
+        for (Tile tile : request.getFullHandAsList()) {
+            if (tile.getType() != Type.Simple) { return; }
+            request.getYaku().add(Yaku.AllSimples);
+        }
+    }
+
+    /**
+     * All these Yaku are compatible with most other Yaku and require a closed hand:
+     * - Tsumo requires that the winning tile is self-drawn.
+     * - Riichi requires that Riichi is called when in Tenpai.
+     * - Double Riichi requires Riichi to be called on the player's first turn.
+     * - Ippatsu is complex, but basically requires that the player that called Riichi draws/calls their winning tile
+     *   before they can discard again, or before another player calls Chi/Pon.
+     *
+     * @param request object that the hand is checked from
+     */
+    public static void checkForRiichiAndTsumo(PointsRequest request) {
+        if (!request.getOpenHand()) { return; }
+
+        if (request.getTsumo()) { request.getYaku().add(Yaku.Tsumo); }
+
+        boolean riichi = request.getFlags().getOrDefault("riichi", false);
+        boolean doubleRiichi = request.getFlags().getOrDefault("doubleRiichi", false);
+        boolean ippatsu = request.getFlags().getOrDefault("ippatsu", false);
+
+        if (riichi) { request.getYaku().add(Yaku.Riichi); }
+        if (riichi && doubleRiichi) { request.getYaku().add(Yaku.DoubleRiichi); }
+        if (riichi && ippatsu) { request.getYaku().add(Yaku.Ippatsu); }
+    }
+
+    public static void checkForPinfu(PointsRequest request) {
 
     }
 }

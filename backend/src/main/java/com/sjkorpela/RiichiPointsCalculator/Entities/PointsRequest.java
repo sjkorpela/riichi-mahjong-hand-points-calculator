@@ -48,11 +48,13 @@ public class PointsRequest {
     private Boolean openHand;
     private HashMap<String, Boolean> flags;
 
+    private Integer fu;
     private ArrayList<Yaku> yaku;
     private Boolean yakumanAchieved;
     private Suit flushSuit;
 
     public void initalizeOtherFields() {
+        fu = 0;
         yaku = new ArrayList<Yaku>();
         yakumanAchieved = false;
         flushSuit = null;
@@ -74,5 +76,11 @@ public class PointsRequest {
         Collections.sort(list);
 
         return list;
+    }
+
+    public HashMap<Tile, Integer> getFullHandAsMap() {
+        HashMap<Tile, Integer> temp =  new HashMap<Tile, Integer>(hand);
+        temp.merge(winningTile, 1, Integer::sum);
+        return temp;
     }
 }
