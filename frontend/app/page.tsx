@@ -23,6 +23,7 @@ import FancyBoolean from "@/app/Components/FancyBoolean";
 import WindSelect from "@/app/Components/WindSelect";
 import Boolean from "@/app/Components/Boolean";
 import DoraIndicators from "@/app/Components/DoraIndicators";
+import YakuItem from "@/app/Components/YakuItem";
 
 export default function Home() {
 
@@ -136,74 +137,84 @@ export default function Home() {
     // }
 
     return (
-        <div className="flex flex-col min-h-screen items-center justify-center gap-3 bg-green-400 min-w-175">
-            <div className="flex gap-3">
-                <div className={`p-3 bg-green-600 rounded-xl ${tileSelectFocus == "H" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("H")}>
-                    <h1 className="text-2xl text-white font-bold text-start pb-4">Hand {handSize}/{maxHandSize}</h1>
-                    <Hand hand={hand} removeTileFromHand={removeTileFromHand} maxHandSize={maxHandSize} />
+        <div className="min-w-full bg-green-400 flex justify-center p-20">
+            <div className="flex flex-col min-h-screen max-w-fit items-center justify-center gap-3">
+                <div className="flex gap-3">
+                    <div className={`p-3 bg-green-600 rounded-xl ${tileSelectFocus == "H" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("H")}>
+                        <h1 className="text-2xl text-white font-bold text-start pb-4">Hand {handSize}/{maxHandSize}</h1>
+                        <Hand hand={hand} removeTileFromHand={removeTileFromHand} maxHandSize={maxHandSize} />
+                    </div>
+                    <div className={`flex flex-col items-center p-3 bg-green-600 rounded-xl ${tileSelectFocus == "W" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("W")}>
+                        <h1 className="text-2xl text-white font-bold text-start pb-1">Winning Tile</h1>
+                        <WinningTile face={winningTile} removeTileFromWinning={removeTileFromWinning} />
+                    </div>
                 </div>
-                <div className={`flex flex-col items-center p-3 bg-green-600 rounded-xl ${tileSelectFocus == "W" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("W")}>
-                    <h1 className="text-2xl text-white font-bold text-start pb-1">Winning Tile</h1>
-                    <WinningTile face={winningTile} removeTileFromWinning={removeTileFromWinning} />
-                </div>
-            </div>
-            <div className="flex flex-wrap items-start gap-3">
-                <div className="flex flex-col gap-3">
-                    <div className="p-3 bg-green-600 rounded-xl">
-                        <div className="flex justify-between pb-4">
-                            <h1 className="text-2xl text-white font-bold">Tile Select</h1>
-                            <ModeSelect options={["H", "W", "D"]} activeMode={tileSelectFocus} setMode={(mode) => setTileSelectFocus(mode)} />
+                <div className="flex flex-wrap items-start gap-3">
+                    <div className="flex flex-col gap-3">
+                        <div className="p-3 bg-green-600 rounded-xl">
+                            <div className="flex justify-between pb-4">
+                                <h1 className="text-2xl text-white font-bold">Tile Select</h1>
+                                <ModeSelect options={["H", "W", "D"]} activeMode={tileSelectFocus} setMode={(mode) => setTileSelectFocus(mode)} />
+                            </div>
+                            <div className="grid grid-cols-10 gap-1">
+                                {tileTypes.map((face, key) => {
+                                    let noMoreTile: boolean
+                                    // normally there's four copies of a tile,
+                                    // but because one five of every land is a red five
+                                    // there can only be 3 fives and 1 red five
+                                    if (face[2] == 'r') { noMoreTile = spentTiles[face] >= red5TileCount; }
+                                    else if (face[1] == '5') { noMoreTile = spentTiles[face] >= maxTileCount - red5TileCount; }
+                                    else { noMoreTile = spentTiles[face] >= maxTileCount; }
+
+                                    const addTile = focusFunc(tileSelectFocus);
+
+
+                                    return <TileButton
+                                        face={face}
+                                        whenClicked={() => addTile(face)}
+                                        key={key}
+                                        inactive={(tileSelectFocus == "H" && handFull) || (tileSelectFocus == "W" && !!winningTile) || (tileSelectFocus == "D" && doraFull) || noMoreTile || !tileSelectFocus}
+                                    />
+                                })}
+                            </div>
                         </div>
-                        <div className="grid grid-cols-10 gap-1">
-                            {tileTypes.map((face, key) => {
-                                let noMoreTile: boolean
-                                // normally there's four copies of a tile,
-                                // but because one five of every land is a red five
-                                // there can only be 3 fives and 1 red five
-                                if (face[2] == 'r') { noMoreTile = spentTiles[face] >= red5TileCount; }
-                                else if (face[1] == '5') { noMoreTile = spentTiles[face] >= maxTileCount - red5TileCount; }
-                                else { noMoreTile = spentTiles[face] >= maxTileCount; }
-
-                                const addTile = focusFunc(tileSelectFocus);
-
-
-                                return <TileButton
-                                    face={face}
-                                    whenClicked={() => addTile(face)}
-                                    key={key}
-                                    inactive={(tileSelectFocus == "H" && handFull) || (tileSelectFocus == "W" && !!winningTile) || (tileSelectFocus == "D" && doraFull) || noMoreTile || !tileSelectFocus}
-                                />
-                            })}
+                        <div className={`p-3 bg-green-600 rounded-xl ${tileSelectFocus == "D" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("D")}>
+                            <h1 className="text-2xl text-white font-bold pb-1">Dora</h1>
+                            <DoraIndicators dora={dora} removeTileFromDora={removeTileFromDora} maxDora={maxDora}/>
                         </div>
                     </div>
-                    <div className={`p-3 bg-green-600 rounded-xl ${tileSelectFocus == "D" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("D")}>
-                        <h1 className="text-2xl text-white font-bold pb-1">Dora</h1>
-                        <DoraIndicators dora={dora} removeTileFromDora={removeTileFromDora} maxDora={maxDora}/>
+                    <div className="flex flex-col gap-3">
+                        <div className="p-3 bg-green-600 rounded-xl justify-center">
+                            <h1 className="text-2xl text-white font-bold pb-1">Win Declaration</h1>
+                            <FancyBoolean trueOption={"Tsumo"} falseOption={"Ron"} bool={tsumo} updateBool={() => setTsumo(!tsumo)} flipOptions={true}/>
+                        </div>
+                        <div className="p-3 bg-green-600 rounded-xl justify-center">
+                            <h1 className="text-2xl text-white font-bold pb-1">Hand State</h1>
+                            <FancyBoolean trueOption={"Open"} falseOption={"Closed"} bool={openHand} updateBool={() => setOpenHand(!openHand)} flipOptions={true}/>
+                        </div>
+                        <div className="p-3 bg-green-600 rounded-xl">
+                            <h1 className="text-2xl text-white font-bold pb-1">Round Wind</h1>
+                            <WindSelect wind={roundWind} updateWind={setRoundWind}/>
+                            <h1 className="text-2xl text-white font-bold pb-1">Seat Wind</h1>
+                            <WindSelect wind={seatWind} updateWind={setSeatWind}/>
+                        </div>
+                        <div className="p-3 bg-green-600 rounded-xl">
+                            <h1 className="text-2xl text-white font-bold pb-1">Extra Han</h1>
+                            <Boolean name={"Riichi"} bool={riichi} updateBool={() => setRiichi(!riichi)} blocked={openHand}/>
+                            <Boolean name={"Ippatsu"} bool={ippatsu} updateBool={() => setIppatsu(!ippatsu)} blocked={openHand || !riichi}/>
+                            <Boolean name={"Double Riichi"} bool={doubleRiichi} updateBool={() => setDoubleRiichi(!doubleRiichi)} blocked={openHand || !riichi}/>
+                            <Boolean name={"Last Tile"} bool={lastTile} updateBool={() => setLastTile(!lastTile)}/>
+                            <Boolean name={"After a Kan"} bool={afterKan} updateBool={() => setAfterKan(!afterKan)}/>
+                            <Boolean name={"Blessed Hand"} bool={blessedHand} updateBool={() => setBlessedHand(!blessedHand)}/>
+                        </div>
                     </div>
                 </div>
-                <div className="flex flex-col gap-3">
-                    <div className="p-3 bg-green-600 rounded-xl justify-center">
-                        <h1 className="text-2xl text-white font-bold pb-1">Win Declaration</h1>
-                        <FancyBoolean trueOption={"Tsumo"} falseOption={"Ron"} bool={tsumo} updateBool={() => setTsumo(!tsumo)} flipOptions={true}/>
-                    </div>
-                    <div className="p-3 bg-green-600 rounded-xl justify-center">
-                        <h1 className="text-2xl text-white font-bold pb-1">Hand State</h1>
-                        <FancyBoolean trueOption={"Open"} falseOption={"Closed"} bool={openHand} updateBool={() => setOpenHand(!openHand)} flipOptions={true}/>
-                    </div>
-                    <div className="p-3 bg-green-600 rounded-xl">
-                        <h1 className="text-2xl text-white font-bold pb-1">Round Wind</h1>
-                        <WindSelect wind={roundWind} updateWind={setRoundWind}/>
-                        <h1 className="text-2xl text-white font-bold pb-1">Seat Wind</h1>
-                        <WindSelect wind={seatWind} updateWind={setSeatWind}/>
-                    </div>
-                    <div className="p-3 bg-green-600 rounded-xl">
-                        <h1 className="text-2xl text-white font-bold pb-1">Extra Han</h1>
-                        <Boolean name={"Riichi"} bool={riichi} updateBool={() => setRiichi(!riichi)} blocked={openHand}/>
-                        <Boolean name={"Ippatsu"} bool={ippatsu} updateBool={() => setIppatsu(!ippatsu)} blocked={openHand || !riichi}/>
-                        <Boolean name={"Double Riichi"} bool={doubleRiichi} updateBool={() => setDoubleRiichi(!doubleRiichi)} blocked={openHand || !riichi}/>
-                        <Boolean name={"Last Tile"} bool={lastTile} updateBool={() => setLastTile(!lastTile)}/>
-                        <Boolean name={"After a Kan"} bool={afterKan} updateBool={() => setAfterKan(!afterKan)}/>
-                        <Boolean name={"Blessed Hand"} bool={blessedHand} updateBool={() => setBlessedHand(!blessedHand)}/>
+                <div className="flex gap-3 min-w-full">
+                    <div className="p-3 bg-green-600 rounded-xl min-w-full">
+                        <h1 className="text-3xl text-white font-bold pb-1 text-center">Yaku</h1>
+                        <YakuItem name={"Green Dragon"} description={"A triplet of the Green Dragon tile."} han={1} tiles={["dg", "dg", "dg"]} />
+                        <YakuItem name={"Pure Double Sequence"} description={"Two sequences with matching suit and values in a closed hand."} han={1} tiles={["p1", "p1", "p2", "p2", "p3", "p3"]} />
+                        <YakuItem name={"Seven Pairs"} description={"A hand made of seven pairs."} han={2} tiles={["s3", "s3", "s7", "s7", "m2", "m2", "p1", "p1", "p5", "p5r", "we", "we", "dg", "dg"]} />
                     </div>
                 </div>
             </div>
