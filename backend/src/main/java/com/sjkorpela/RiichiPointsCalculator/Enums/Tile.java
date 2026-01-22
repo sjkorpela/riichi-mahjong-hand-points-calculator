@@ -101,4 +101,12 @@ public enum Tile {
         return Arrays.stream(Tile.values()).filter(tile -> tile.type == target).toList();
     }
 
+    public boolean equals(Tile that) {
+        return this.getSuit() == that.getSuit() && this.getValue() == that.getValue();
+    }
+
+    public boolean isNext(Tile that) {
+        return this.getSuit() == that.getSuit() && this.getValue() + 1 == that.getValue();
+    }
+
 }

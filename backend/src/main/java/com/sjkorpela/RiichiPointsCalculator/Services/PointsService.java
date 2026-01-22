@@ -32,6 +32,8 @@ public class PointsService {
         boolean sevenPairs = request.getYaku().contains(Yaku.SevenPairs);
         if (sevenPairs) { request.setFu(sevenPairsFu); }
 
+        // CHECK FOR PURE DOUBLE SEQUENCE BECAUSE ITS BETTER THAN 7P!!!!!
+
         // All Simples also cuts out like 16 possible Yaku/Yakuman. Basically any that require honors or terminals.
         YakuService.checkForAllSimples(request);
         boolean allSimples = request.getYaku().contains(Yaku.AllSimples);
@@ -58,6 +60,10 @@ public class PointsService {
         boolean allTriplets = request.getYaku().contains(Yaku.AllTriplets);
 
         if (!allSimples) { YakuService.checkThirteenOrphans(request); } // possible yakuman
+        boolean thirteenOrphans = request.getYaku().contains(Yaku.ThirteenOrphans) || request.getYaku().contains(Yaku.ThirteenWaitThirteenOrphans);
+
+        if (!sevenPairs && !thirteenOrphans) { HandService.getPossibleHands(request); }
+
         if (fullFlush && !allSimples && !sevenPairs && !allTriplets) { YakuService.checkForNineGates(request); } // possible yakuman
         if ((fullFlush || halfFlush) && !sevenPairs) { YakuService.checkForAllGreen(request); } // possible yakuman
 
