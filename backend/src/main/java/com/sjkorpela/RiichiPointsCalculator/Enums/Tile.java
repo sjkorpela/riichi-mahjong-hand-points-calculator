@@ -109,4 +109,8 @@ public enum Tile {
         return this.getSuit() == that.getSuit() && this.getValue() + 1 == that.getValue();
     }
 
+    public boolean isWind(Wind wind) {
+        return this.value == wind.ordinal();
+    }
+
 }

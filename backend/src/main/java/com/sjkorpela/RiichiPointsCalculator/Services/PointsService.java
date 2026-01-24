@@ -1,6 +1,7 @@
 package com.sjkorpela.RiichiPointsCalculator.Services;
 
 import com.sjkorpela.RiichiPointsCalculator.Entities.PointsRequest;
+import com.sjkorpela.RiichiPointsCalculator.Entities.PossibleHand;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
 
 public class PointsService {
@@ -10,12 +11,10 @@ public class PointsService {
 
     public static void getYaku(PointsRequest request) {
 
-        request.setFu(countFu(request));
-
         // Yaku that are based on factors outside the winning hand itself, ex.:
         // - Calling Ron on the last discard of the hand, aka Under the River
         // There's a possible Yakuman, so this should be checked early to limit the search to Yakuman only
-        YakuService.checkFlagsYaku(request); // possible yakuman
+        YakuService.checkForFlagsYaku(request); // possible yakuman
 
         // Seven Pairs, All Simples, and Half/Full Flush aren't Yakuman, but they should still be checked even if a
         // Yakuman is achieved, because they're much cheaper checks and so can still be used to filter out Yakuman with
@@ -45,9 +44,10 @@ public class PointsService {
         // - Half Outside Hand
         // - Any Yaku that require honors
         // Flushes are also a prerequisite for All Green and (True) Nine Gates
-        YakuService.checkFlushYaku(request);
+        YakuService.checkForFlushYaku(request);
         boolean fullFlush = request.getYaku().contains(Yaku.FullFlush);
         boolean halfFlush = request.getYaku().contains(Yaku.HalfFlush);
+        boolean eitherFlush = fullFlush || halfFlush;
 
         if (!request.getYakumanAchieved() && !request.getOpenHand()) {
             YakuService.checkForRiichiAndTsumo(request);
@@ -59,16 +59,51 @@ public class PointsService {
         if (!sevenPairs) { YakuService.checkForAllTriplets(request); }
         boolean allTriplets = request.getYaku().contains(Yaku.AllTriplets);
 
-        if (!allSimples) { YakuService.checkThirteenOrphans(request); } // possible yakuman
+        if (!allSimples) { YakuService.checkForThirteenOrphans(request); } // possible yakuman
         boolean thirteenOrphans = request.getYaku().contains(Yaku.ThirteenOrphans) || request.getYaku().contains(Yaku.ThirteenWaitThirteenOrphans);
+        boolean hasSequences = !sevenPairs && !allTriplets && !thirteenOrphans;
 
-        if (!sevenPairs && !thirteenOrphans) { HandService.getPossibleHands(request); }
+        if (!sevenPairs && !thirteenOrphans) {
+            HandService.getPossibleHands(request);
+            if (request.getPossibleHands().isEmpty()) {
+                throw new IllegalArgumentException("Hand isn't valid! Not Seven Pairs, Thirteen Orphans, or a valid collection of four sets and one pair.");
+            }
+        }
 
-        if (fullFlush && !allSimples && !sevenPairs && !allTriplets) { YakuService.checkForNineGates(request); } // possible yakuman
-        if ((fullFlush || halfFlush) && !sevenPairs) { YakuService.checkForAllGreen(request); } // possible yakuman
+        if (fullFlush && hasSequences) { YakuService.checkForNineGates(request); } // possible yakuman
+        if (!eitherFlush && !sevenPairs) { YakuService.checkForAllGreen(request); } // possible yakuman
 
 
+        if (!allSimples && !thirteenOrphans) {
+            YakuService.checkForAllTerminalsAndOrHonors(request);
+            boolean allTerminals = request.getYaku().contains(Yaku.AllTerminals);
 
+            if (!allTerminals && !sevenPairs) {
+                YakuService.checkForBigOrLittleThreeDragons(request);
+                YakuService.checkForBigOrLittleThreeDragons(request);
+            }
+
+            if (!request.getYakumanAchieved()) {
+                YakuService.checkForYakuhai(request);
+
+                for (PossibleHand hand : request.getPossibleHands()) {
+                    YakuService.checkForOutsideHand(hand);
+                    YakuService.checkForPureStraight(hand);
+                }
+            }
+        }
+
+        if (!request.getOpenHand()) {
+            for (PossibleHand hand : request.getPossibleHands()) {
+                YakuService.checkForPureDoubleSequences(hand);
+            }
+        }
+
+        if (!eitherFlush) {
+            for (PossibleHand hand : request.getPossibleHands()) {
+                YakuService.checkForMixedTriples(hand);
+            }
+        }
     }
 
     public static int countFu(PointsRequest request) {

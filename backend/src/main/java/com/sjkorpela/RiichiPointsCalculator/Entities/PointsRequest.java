@@ -52,19 +52,14 @@ public class PointsRequest {
     private ArrayList<Yaku> yaku;
     private Boolean yakumanAchieved;
     private Suit flushSuit;
-    private List<Sequence> sequences;
-    private List<Triplet> triplets;
-    private List<Pair> pairs;
+    private List<PossibleHand> possibleHands;
 
-    public void initalizeOtherFields() {
+    public void initializeOtherFields() {
         fu = 0;
         yaku = new ArrayList<Yaku>();
         yakumanAchieved = false;
         flushSuit = null;
-
-        sequences = new ArrayList<>();
-        triplets = new ArrayList<>();
-        pairs = new ArrayList<>();
+        possibleHands = new ArrayList<>();
     }
 
     public List<Tile> getFullHandAsList() {

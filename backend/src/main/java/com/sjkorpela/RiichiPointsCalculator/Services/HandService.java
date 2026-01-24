@@ -8,18 +8,14 @@ import java.util.*;
 public class HandService {
 
     public static void getPossibleHands(PointsRequest request) {
-        // LIST OF ALL POSSIBLE HANDS
-        // BASICALLY JUST UHHH LIKE START AT THE START AND THEN JUST SPLIT FORM THERE
-        // LIKE IF THE FIRST THREE TILES CAN BE USED AS EITHER A PAIR OR A TRIPLET, MAKE TWO BRANCHES!??!??!?!
-
-        // a tile should only look forward to avoid overlapping finds!
-
-        List<Tile> hand = request.getFullHandAsList();
-
-        CheckingHand initalHand = new CheckingHand(hand);
+        CheckingHand initialHand = new CheckingHand(request.getFullHandAsList());
 
         List<CheckingHand> readyHands = new ArrayList<CheckingHand>();
-        checkForNextSet(initalHand, readyHands);
+        checkForNextSet(initialHand, readyHands);
+
+        for (CheckingHand hand : readyHands) {
+            request.getPossibleHands().add(new PossibleHand(hand));
+        }
     }
 
     private static void checkForNextSet(CheckingHand hand, List<CheckingHand> readyHands) {

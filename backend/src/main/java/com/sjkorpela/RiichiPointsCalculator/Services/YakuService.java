@@ -1,18 +1,16 @@
 package com.sjkorpela.RiichiPointsCalculator.Services;
 
-import com.sjkorpela.RiichiPointsCalculator.Entities.PointsRequest;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Suit;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Tile;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Type;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
+import com.sjkorpela.RiichiPointsCalculator.Entities.*;
+import com.sjkorpela.RiichiPointsCalculator.Enums.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class YakuService {
-    public static void checkFlagsYaku(PointsRequest request) {
+    public static void checkForFlagsYaku(PointsRequest request) {
 //        System.out.println("Checking for flags...");
 
         if (request.getFlags().getOrDefault("blessedHand", false)) {
@@ -30,7 +28,7 @@ public class YakuService {
         }
     }
 
-    public static void checkThirteenOrphans(PointsRequest request) {
+    public static void checkForThirteenOrphans(PointsRequest request) {
 //        System.out.println("Checking for Thirteen Orphans...");
 
         // get all orphans aka all terminal and honor tiles
@@ -76,7 +74,7 @@ public class YakuService {
         }
     }
 
-    public static void checkFlushYaku(PointsRequest request) {
+    public static void checkForFlushYaku(PointsRequest request) {
 //        System.out.println("Checking for flushes...");
 
         List<Tile> hand = request.getFullHandAsList();
@@ -283,6 +281,254 @@ public class YakuService {
     }
 
     public static void checkForPinfu(PointsRequest request) {
+
+    }
+
+    /**
+     * All Terminals and Honors, All Terminals, and All Honors are as their names imply.
+     *
+     * @param request object that the hand is checked from
+     */
+    public static void checkForAllTerminalsAndOrHonors(PointsRequest request) {
+        List<Tile> hand = request.getFullHandAsList();
+
+        boolean hasTerminals = false;
+        boolean hasHonors = false;
+
+        for (Tile tile : hand) {
+            switch (tile.getType()) {
+                case Terminal:
+                    hasTerminals = true;
+                    break;
+                case Honor:
+                    hasHonors = true;
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        if (hasTerminals && hasHonors) {
+            request.getYaku().add(Yaku.AllTerminalsAndHonors);
+        } else if (hasTerminals) {
+            request.getYaku().add(Yaku.AllTerminals);
+            request.setYakumanAchieved(true);
+        } else if (hasHonors) {
+            request.getYaku().add(Yaku.ALlHonors);
+            request.setYakumanAchieved(true);
+        }
+    }
+
+    /**
+     * Big Three Dragons requires a triplet of each dragon tile: Green, Red, and White.
+     * Little Three Dragons is a downgrade of Big Three Dragons where one of the dragon triplets is a pair.
+     *
+     * @param request object that the hand is checked from
+     */
+    public static void checkForBigOrLittleThreeDragons(PointsRequest request) {
+        List<Tile> dragons = Tile.getAllTilesBySuit(Suit.Dragon);
+        HashMap<Tile, Integer> hand = request.getFullHandAsMap();
+
+        // One wind pair is allowed
+        boolean dragonPair = false;
+
+        for (Tile dragon : dragons) {
+            int windAmount = hand.getOrDefault(dragon, 0);
+
+            if (windAmount < 2) {
+                return;
+            } else if (windAmount == 2 && !dragonPair) {
+                dragonPair = true;
+            } else if (windAmount == 2) {
+                return;
+            } else if (windAmount > 3) {
+                // Theoretically not possible but check anyway
+                return;
+            }
+        }
+
+        if (!dragonPair) {
+            request.getYaku().add(Yaku.BigThreeDragons);
+            request.setYakumanAchieved(true);
+        } else {
+            request.getYaku().add(Yaku.LittleThreeDragons);
+        }
+    }
+
+    public static void checkForFourBigOrLittleWinds(PointsRequest request) {
+        List<Tile> winds = Tile.getAllTilesBySuit(Suit.Wind);
+        HashMap<Tile, Integer> hand = request.getFullHandAsMap();
+
+        // One wind pair is allowed
+        boolean windPair = false;
+
+        for (Tile wind : winds) {
+            int windAmount = hand.getOrDefault(wind, 0);
+
+            if (windAmount < 2) {
+                return;
+            } else if (windAmount == 2 && !windPair) {
+                windPair = true;
+            } else if (windAmount == 2) {
+                return;
+            } else if (windAmount > 3) {
+                // Theoretically not possible but check anyway
+                return;
+            }
+        }
+
+        if (!windPair) {
+            request.getYaku().add(Yaku.FourBigWinds);
+            request.setYakumanAchieved(true);
+        } else {
+            request.getYaku().add(Yaku.FourLittleWinds);
+            request.setYakumanAchieved(true);
+        }
+    }
+
+    /**
+     * Yakuhai is actually a shared name for 6 different Yaku:
+     * - Green Dragon Yakuhai: A triplet of Green Dragons.
+     * - Red Dragon Yakuhai: A triplet of Red Dragons.
+     * - White Dragon Yakuhai: A triplet of White Dragons.
+     * - Prevalent Wind Yakuhai: A triplet of the round wind. Most commonly East.
+     * - Seat Wind Yakuhai: A triplet of the player's seat wind.
+     * <p>
+     * If the round wind and seat wind are the same, both Yakuhai are awarded.
+     *
+     * @param request object that the hand is checked from
+     */
+    public static void checkForYakuhai(PointsRequest request) {
+        List<Tile> honors = Tile.getAllTilesByType(Type.Honor);
+        Wind roundWind = request.getRoundWind();
+        Wind seatWind = request.getSeatWind();
+        HashMap<Tile, Integer> hand = request.getFullHandAsMap();
+
+        for (Tile honor : honors) {
+            int honorAmount = hand.getOrDefault(honor, 0);
+            Suit honorSuit = honor.getSuit();
+
+            if (honorSuit == Suit.Dragon && honorAmount == 3) {
+                switch (honor) {
+                    case dg:
+                        request.getYaku().add(Yaku.GreenDragon);
+                        break;
+                    case dr:
+                        request.getYaku().add(Yaku.RedDragon);
+                        break;
+                    case dw:
+                        request.getYaku().add(Yaku.WhiteDragon);
+                        break;
+                }
+            } else if (honorSuit == Suit.Wind && honorAmount == 3) {
+                if (honor.isWind(roundWind)) { request.getYaku().add(Yaku.PrevalentWind); }
+                if (honor.isWind(seatWind)) { request.getYaku().add(Yaku.SeatWind); }
+            }
+        }
+    }
+
+    /**
+     * Fully Outside Hand is a Yaku that requires:
+     * - All sets and pairs to include a terminal
+     * <p>
+     * If the hand has sets or pairs of honors, it's a Half Outside Hand.
+     *
+     * @param hand hand that the Yaku is checked from
+     */
+    public static void checkForOutsideHand(PossibleHand hand) {
+
+        boolean hasHonors = false;
+
+        for (Set set : hand.getSets()) {
+            if (set instanceof Sequence) {
+                Tile[] tiles = ((Sequence) set).getTiles();
+                if (tiles[0].getValue() != 1 || tiles[2].getValue() != 9) {
+                    return;
+                }
+            } else if (set instanceof Triplet) {
+                Type tileType = ((Triplet) set).getTile().getType();
+                if (tileType == Type.Honor) {
+                    hasHonors = true;
+                } else if (tileType == Type.Simple) {
+                    return;
+                }
+            } else if (set instanceof Pair) {
+                Type tileType = ((Pair) set).getTile().getType();
+                if (tileType == Type.Honor) {
+                    hasHonors = true;
+                } else if (tileType == Type.Simple) {
+                    return;
+                }
+            }
+        }
+
+        if (hasHonors) {
+            hand.getYaku().add(Yaku.HalfOutsideHand);
+        } else {
+            hand.getYaku().add(Yaku.FullyOutsideHand);
+        }
+    }
+
+    /**
+     * Pure Straight is a Yaku that requires:
+     * - A sequence of 123.
+     * - A sequence of 456.
+     * - A sequence of 789.
+     * - And for those three sequences to be of the same suit.
+     *
+     * @param hand hand that the Yaku is checked from
+     */
+    public static void checkForPureStraight(PossibleHand hand) {
+        for (Suit suit : Suit.values()) {
+            boolean oneTwoThree = false;
+            boolean fourFiveSix = false;
+            boolean sevenEightNine = false;
+
+            for (Set set : hand.getSets()) {
+                if (set instanceof Sequence) {
+                    Tile[] tiles = ((Sequence) set).getTiles();
+                    if (tiles[0].getValue() == 1) {
+                        oneTwoThree = true;
+                    } else if (tiles[1].getValue() == 5) {
+                        fourFiveSix = true;
+                    } else if (tiles[2].getValue() == 9) {
+                        sevenEightNine = true;
+                    }
+                }
+            }
+
+            if (oneTwoThree && fourFiveSix && sevenEightNine) {
+                hand.getYaku().add(Yaku.PureStraight);
+                return;
+            }
+        }
+    }
+
+    public static void checkForPureDoubleSequences(PossibleHand hand) {
+
+        int pureDoubleSequenceAmount = 0;
+
+        for (Set set : hand.getSets()) {
+            if (set instanceof Sequence) {
+                for (Set checkSet : hand.getSets()) {
+                    if (checkSet != set && set.equals(checkSet)) {
+                        pureDoubleSequenceAmount++;
+                    }
+                }
+            }
+        }
+
+        if (pureDoubleSequenceAmount == 1) {
+            hand.getYaku().add(Yaku.PureDoubleSequence);
+        } else if (pureDoubleSequenceAmount == 2) {
+            hand.getYaku().add(Yaku.TwicePureDoubleSequence);
+        }
+    }
+
+    public static void checkForMixedTriples(PossibleHand hand) {
+
+
+
 
     }
 }
