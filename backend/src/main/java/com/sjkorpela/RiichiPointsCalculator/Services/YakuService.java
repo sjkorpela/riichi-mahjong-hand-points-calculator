@@ -104,7 +104,7 @@ public class YakuService {
     }
 
     /**
-     * Seven Pairs is a yaku that requires:
+     * Seven Pairs is a Yaku that requires:
      * - The hand to be made of seven pairs
      * <p>
      * Seven Pairs is a unique hand structure, but is still compatible with:
@@ -252,8 +252,8 @@ public class YakuService {
     public static void checkForAllSimples(PointsRequest request) {
         for (Tile tile : request.getFullHandAsList()) {
             if (tile.getType() != Type.Simple) { return; }
-            request.getYaku().add(Yaku.AllSimples);
         }
+        request.getYaku().add(Yaku.AllSimples);
     }
 
     /**
@@ -484,9 +484,9 @@ public class YakuService {
             boolean fourFiveSix = false;
             boolean sevenEightNine = false;
 
-            for (Set set : hand.getSets()) {
-                if (set instanceof Sequence) {
-                    Tile[] tiles = ((Sequence) set).getTiles();
+            for (Sequence set : hand.getSequences()) {
+                if (set.getSuit() == suit) {
+                    Tile[] tiles = set.getTiles();
                     if (tiles[0].getValue() == 1) {
                         oneTwoThree = true;
                     } else if (tiles[1].getValue() == 5) {
@@ -526,9 +526,74 @@ public class YakuService {
     }
 
     public static void checkForMixedTriples(PossibleHand hand) {
+        List<Triplet> triplets = hand.getTriplets();
+        List<Sequence> sequences = hand.getSequences();
 
+        boolean tripleTriplets = false;
 
+        if (triplets.size() >= 3) {
+            HashMap<Integer, Integer> count = new HashMap<>();
 
+            for (Triplet triplet : triplets) {
+                Tile tile = triplet.getTile();
+                if (tile.getType() != Type.Honor) {
+                    count.merge(tile.getValue(), 1, Integer::sum);
+                }
+            }
 
+            for (Map.Entry<Integer, Integer> entry : count.entrySet()) {
+                int amount = entry.getValue();
+
+                if (amount >= 3) {
+                    hand.getYaku().add(Yaku.TripleTriplets);
+                    tripleTriplets = true;
+                }
+            }
+        }
+
+        if (!tripleTriplets && sequences.size() >= 3) {
+            HashMap<Integer, Integer> count = new HashMap<>();
+
+            for (Sequence sequence : sequences) {
+                Tile tile = sequence.getTiles()[0];
+                count.merge(tile.getValue(), 1, Integer::sum);
+            }
+
+            for (Map.Entry<Integer, Integer> entry : count.entrySet()) {
+                int amount = entry.getValue();
+
+                if (amount >= 3) {
+                    hand.getYaku().add(Yaku.MixedTripleSequence);
+                }
+            }
+        }
+    }
+
+    public static void checkForConcealedTriplets(PointsRequest request) {
+        boolean closedTsumo = !request.getOpenHand() && request.getTsumo();
+
+        // nts: double check this
+
+        for (PossibleHand hand : request.getPossibleHands()) {
+            List<Triplet> triplets = hand.getTriplets();
+
+            int concealedTriplets = 0;
+
+            if (!closedTsumo) {
+                for (Triplet triplet : triplets) {
+                    if (triplet.getTile() != request.getWinningTile()) {
+                        concealedTriplets++;
+                    }
+                }
+            } else {
+                concealedTriplets = triplets.size();
+            }
+            // DOES NOT ACCOUNT FOR SINGLE WAIT FOUR CONCEALED TRIPLETS
+            if (concealedTriplets == 4) {
+                hand.getYaku().add(Yaku.FourConcealedTriplets);
+            } else if (concealedTriplets == 3) {
+                hand.getYaku().add(Yaku.ThreeConcealedTriplets);
+            }
+        }
     }
 }
