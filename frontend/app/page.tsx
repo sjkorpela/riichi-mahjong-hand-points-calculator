@@ -24,10 +24,10 @@ import WindSelect from "@/app/Components/WindSelect";
 import Boolean from "@/app/Components/Boolean";
 import DoraIndicators from "@/app/Components/DoraIndicators";
 import YakuItem from "@/app/Components/YakuItem";
+import {Fetcher} from "@/app/Fetcher";
 
 export default function Home() {
 
-    // if true, tile select adds tiles to hand, if false adds to dora
     const [tileSelectFocus, setTileSelectFocus] = useState<string | null>("H");
 
     function focusFunc(focus: string | null) {
@@ -109,32 +109,34 @@ export default function Home() {
     }
 
     // preview of points calculation params
-    // if (handSize == maxHandSize) {
-    //     const trimmedHand: {[index: string]: number} = {}
-    //     Object.keys(hand).forEach((tile) => {
-    //         if (hand[tile] > 0) {trimmedHand[tile] = hand[tile]}
-    //     })
-    //
-    //
-    //
-    //     const calculationInfo = {
-    //         hand: trimmedHand,
-    //         roundWind: roundWind,
-    //         seatWind: seatWind,
-    //         doraIndicators: dora,
-    //         openHand: openHand,
-    //         flags: {
-    //             riichi: riichi,
-    //             ippatsu: ippatsu,
-    //             doubleRiichi: doubleRiichi,
-    //             tsumo: tsumo,
-    //             lastTile: lastTile,
-    //             afterKan: afterKan,
-    //         }
-    //     }
-    //
-    //     console.log("calculationInfo: ", calculationInfo);
-    // }
+    if (handSize == maxHandSize && winningTile != null) {
+        const trimmedHand: {[index: string]: number} = {}
+        Object.keys(hand).forEach((tile) => {
+            if (hand[tile] > 0) {trimmedHand[tile] = hand[tile]}
+        })
+
+        const calculationInfo = {
+            hand: trimmedHand,
+            winningTile: winningTile,
+            roundWind: roundWind,
+            seatWind: seatWind,
+            doraIndicators: dora,
+            openHand: openHand,
+            tsumo: tsumo,
+            flags: {
+                riichi: riichi,
+                ippatsu: ippatsu,
+                doubleRiichi: doubleRiichi,
+                lastTile: lastTile,
+                afterKan: afterKan,
+                blessedHand: blessedHand,
+            }
+        }
+
+        Fetcher.getYaku(calculationInfo);
+
+        console.log("calculationInfo: ", calculationInfo);
+    }
 
     return (
         <div className="min-w-full bg-green-400 flex justify-center p-20">
