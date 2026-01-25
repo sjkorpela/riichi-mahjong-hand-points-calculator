@@ -1,10 +1,10 @@
 
-interface fetchYakuProps {
+interface FetchYakuProps {
     hand: object,
     winningTile: string,
     roundWind: string,
     seatWind: string,
-    doraIndicators: string[],
+    dora: string[],
     openHand: boolean,
     tsumo: boolean,
     flags: {
@@ -17,19 +17,33 @@ interface fetchYakuProps {
     }
 }
 
+export interface ResponseYaku {
+    englishName: string,
+    japaneseName: string,
+    description: string,
+    han: number,
+    tiles?: string[],
+}
+
+export interface YakuResponse {
+    yaku: ResponseYaku[],
+    openHand: boolean,
+}
+
 export class Fetcher {
 
-    public static async getYaku(request: fetchYakuProps): Promise<object> {
-        const raw = await fetch('http://localhost:8080', {
-            method: 'GET',
+    public static async getYaku(request: FetchYakuProps): Promise<YakuResponse> {
+        console.log("Fetching with:", request)
+        const raw = await fetch('http://localhost:8080/points', {
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(request)
         });
-        const yaku = await raw.json();
-        console.log("Yaku: ", yaku);
-        return yaku;
+        const response: YakuResponse = await raw.json();
+        console.log("Response: ", response);
+        return response;
     }
 }

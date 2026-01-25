@@ -15,7 +15,7 @@ const maxDora = 10;
 const maxTileCount = 4;
 const red5TileCount = 1;
 
-import {useState} from "react";
+import {useEffect, useEffectEvent, useState} from "react";
 import Hand from "@/app/Components/Hand";
 import WinningTile from "@/app/Components/WinningTile";
 import TileButton from "@/app/Components/TileButton";
@@ -23,8 +23,8 @@ import FancyBoolean from "@/app/Components/FancyBoolean";
 import WindSelect from "@/app/Components/WindSelect";
 import Boolean from "@/app/Components/Boolean";
 import DoraIndicators from "@/app/Components/DoraIndicators";
-import YakuItem from "@/app/Components/YakuItem";
-import {Fetcher} from "@/app/Fetcher";
+import {Fetcher, YakuResponse} from "@/app/Fetcher";
+import YakuList from "@/app/Components/YakuList";
 
 export default function Home() {
 
@@ -65,6 +65,8 @@ export default function Home() {
     const [lastTile, setLastTile] = useState<boolean>(false);
     const [afterKan, setAfterKan] = useState<boolean>(false);
     const [blessedHand, setBlessedHand] = useState<boolean>(false);
+
+    const [response, setResponse] = useState<YakuResponse | null>(null);
 
     function addTileToHand(tile: string) {
         if (hand[tile] < maxTileCount && handSize < maxHandSize) {
@@ -108,8 +110,9 @@ export default function Home() {
         setDora(dora => dora.filter((_, i) => (i != index)))
     }
 
-    // preview of points calculation params
-    if (handSize == maxHandSize && winningTile != null) {
+    async function updateYaku(): Promise<void> {
+        if (winningTile == null) { return; }
+
         const trimmedHand: {[index: string]: number} = {}
         Object.keys(hand).forEach((tile) => {
             if (hand[tile] > 0) {trimmedHand[tile] = hand[tile]}
@@ -120,7 +123,7 @@ export default function Home() {
             winningTile: winningTile,
             roundWind: roundWind,
             seatWind: seatWind,
-            doraIndicators: dora,
+            dora: dora,
             openHand: openHand,
             tsumo: tsumo,
             flags: {
@@ -133,10 +136,19 @@ export default function Home() {
             }
         }
 
-        Fetcher.getYaku(calculationInfo);
-
-        console.log("calculationInfo: ", calculationInfo);
+        const response: YakuResponse = await Fetcher.getYaku(calculationInfo);
+        setResponse(response);
     }
+
+    const onFullHand = useEffectEvent(() => {
+        updateYaku();
+    })
+
+    useEffect(() => {
+        if (handSize == maxHandSize && winningTile != null) {
+            onFullHand();
+        }
+    }, [handSize, spentTiles, winningTile])
 
     return (
         <div className="min-w-full bg-green-400 flex justify-center p-20">
@@ -211,13 +223,11 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-3 min-w-full">
+                <div className="gap-3 min-w-full flex flex-col">
                     <div className="p-3 bg-green-600 rounded-xl min-w-full">
                         <h1 className="text-3xl text-white font-bold pb-1 text-center">Yaku</h1>
-                        <YakuItem name={"Green Dragon"} description={"A triplet of the Green Dragon tile."} han={1} tiles={["dg", "dg", "dg"]} />
-                        <YakuItem name={"Pure Double Sequence"} description={"Two sequences with matching suit and values in a closed hand."} han={1} tiles={["p1", "p1", "p2", "p2", "p3", "p3"]} />
-                        <YakuItem name={"Seven Pairs"} description={"A hand made of seven pairs."} han={2} tiles={["s3", "s3", "s7", "s7", "m2", "m2", "p1", "p1", "p5", "p5r", "we", "we", "dg", "dg"]} />
                     </div>
+                    <YakuList response={response}/>
                 </div>
             </div>
         </div>

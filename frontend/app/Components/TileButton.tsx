@@ -23,7 +23,7 @@ export default function TileButton({face, whenClicked, inactive, big}: TileButto
 
         return (
             <div className={`tile ${colors} ${add}`}>
-                <Image src={`/images/${face}.svg`} alt={faceVerbose} width={48} height={60} className="pointer-events-none"/>
+                <Image src={`/images/${face}.svg`} alt={faceVerbose} width={48} height={60} className="pointer-events-none w-full h-auto"/>
             </div>
         )
     }

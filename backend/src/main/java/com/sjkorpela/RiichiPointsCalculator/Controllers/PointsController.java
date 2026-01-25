@@ -1,6 +1,8 @@
 package com.sjkorpela.RiichiPointsCalculator.Controllers;
 
 import com.sjkorpela.RiichiPointsCalculator.Entities.PointsRequest;
+import com.sjkorpela.RiichiPointsCalculator.Entities.PointsResponse;
+import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
 import com.sjkorpela.RiichiPointsCalculator.Services.PointsService;
 import com.sjkorpela.RiichiPointsCalculator.Services.ValidationService;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,9 @@ public class PointsController {
             ValidationService.validatePointsRequest(request);
             request.initializeOtherFields();
             PointsService.getYaku(request);
-            return new ResponseEntity<>(request, HttpStatus.OK);
+            PointsResponse response = new PointsResponse(request);
+            System.out.println(response.getYaku());
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

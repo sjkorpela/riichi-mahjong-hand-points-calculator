@@ -8,11 +8,10 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class YakuData {
+public class ResponseYaku {
     private String englishName;
     private String japaneseName;
     private String description;
-    private Integer closedHan = 0;
-    private Integer openHan = 0;
-    private List<Tile> usedTiles;
+    private Integer han = 0;
+    private List<Tile> tiles;
 }

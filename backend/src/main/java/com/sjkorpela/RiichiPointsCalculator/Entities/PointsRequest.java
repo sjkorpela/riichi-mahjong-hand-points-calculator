@@ -49,7 +49,7 @@ public class PointsRequest {
     private HashMap<String, Boolean> flags;
 
     private Integer fu;
-    private ArrayList<Yaku> yaku;
+    private List<Yaku> yaku;
     private Boolean yakumanAchieved;
     private Suit flushSuit;
     private List<PossibleHand> possibleHands;

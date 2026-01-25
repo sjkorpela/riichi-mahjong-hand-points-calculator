@@ -7,19 +7,18 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class YakumanData extends YakuData {
+public class YakumanData extends ResponseYaku {
     private Integer yakumanCount;
 
     public YakumanData(
             String englishName,
             String japaneseName,
             String description,
-            Integer closedHan,
-            Integer openHan,
+            Integer han,
             List<Tile> usedTiles,
             Integer count
     ) {
-        super(englishName, japaneseName, description, closedHan, openHan, usedTiles);
+        super(englishName, japaneseName, description, han, usedTiles);
         this.yakumanCount = count;
     }
 }
