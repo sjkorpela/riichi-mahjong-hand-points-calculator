@@ -2,6 +2,7 @@ package com.sjkorpela.RiichiPointsCalculator.Entities;
 
 import com.sjkorpela.RiichiPointsCalculator.Enums.Tile;
 import com.sjkorpela.RiichiPointsCalculator.Enums.Yaku;
+import com.sjkorpela.RiichiPointsCalculator.Services.JsonService;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -19,13 +20,7 @@ public class PointsResponse {
         this.openHand = request.getOpenHand();
 
         for (Yaku yaku : request.getYaku()) {
-            this.yaku.add(new ResponseYaku(
-                    "Green Dragon",
-                    "Yakuhai",
-                    "A triplet of Green Dragons.",
-                    1,
-                    Arrays.asList(Tile.dg, Tile.dg, Tile.dg)
-            ));
+            this.yaku.add(JsonService.getYakuDetail(yaku, request.getOpenHand()));
         }
     }
 }

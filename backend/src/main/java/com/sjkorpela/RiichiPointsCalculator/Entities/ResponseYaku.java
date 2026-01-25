@@ -14,4 +14,12 @@ public class ResponseYaku {
     private String description;
     private Integer han = 0;
     private List<Tile> tiles;
+
+    public ResponseYaku(String englishName, String japaneseName, String description, Integer han) {
+        this.englishName = englishName;
+        this.japaneseName = japaneseName;
+        this.description = description;
+        this.han = han;
+        this.tiles = null;
+    }
 }

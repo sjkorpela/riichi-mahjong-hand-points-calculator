@@ -275,8 +275,9 @@ public class YakuService {
         boolean doubleRiichi = request.getFlags().getOrDefault("doubleRiichi", false);
         boolean ippatsu = request.getFlags().getOrDefault("ippatsu", false);
 
-        if (riichi) { request.getYaku().add(Yaku.Riichi); }
-        if (riichi && doubleRiichi) { request.getYaku().add(Yaku.DoubleRiichi); }
+        if (riichi && !doubleRiichi) { request.getYaku().add(Yaku.Riichi); }
+        else if (riichi && doubleRiichi) { request.getYaku().add(Yaku.DoubleRiichi); }
+
         if (riichi && ippatsu) { request.getYaku().add(Yaku.Ippatsu); }
     }
 

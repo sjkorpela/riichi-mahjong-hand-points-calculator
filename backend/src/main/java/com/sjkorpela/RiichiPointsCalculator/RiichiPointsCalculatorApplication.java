@@ -1,5 +1,6 @@
 package com.sjkorpela.RiichiPointsCalculator;
 
+import com.sjkorpela.RiichiPointsCalculator.Services.JsonService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
