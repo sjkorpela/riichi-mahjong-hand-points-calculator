@@ -52,7 +52,7 @@ public class PointsService {
         boolean halfFlush = request.getYaku().contains(Yaku.HalfFlush);
         boolean eitherFlush = fullFlush || halfFlush;
 
-        if (!request.getYakumanAchieved() && !request.getOpenHand()) {
+        if (!request.getYakumanAchieved() ||!request.getOpenHand()) {
             YakuService.checkForRiichiAndTsumo(request);
             YakuService.checkForPinfu(request); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }

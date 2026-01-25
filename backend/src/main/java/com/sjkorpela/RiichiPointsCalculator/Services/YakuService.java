@@ -267,7 +267,7 @@ public class YakuService {
      * @param request object that the hand is checked from
      */
     public static void checkForRiichiAndTsumo(PointsRequest request) {
-        if (!request.getOpenHand()) { return; }
+        if (request.getOpenHand()) { return; }
 
         if (request.getTsumo()) { request.getYaku().add(Yaku.Tsumo); }
 
