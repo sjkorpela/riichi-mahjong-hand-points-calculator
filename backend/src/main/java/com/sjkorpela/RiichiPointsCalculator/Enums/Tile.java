@@ -113,4 +113,11 @@ public enum Tile {
         return this.value == wind.ordinal();
     }
 
+    public Wind toWind() {
+        if (this.suit == Suit.Wind) {
+            return Wind.valueOf(this.toString());
+        }
+        return null;
+    }
+
 }

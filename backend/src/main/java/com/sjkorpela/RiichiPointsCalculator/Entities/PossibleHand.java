@@ -41,4 +41,13 @@ public class PossibleHand {
         }
         return triplets;
     }
+
+    public Pair getPair() {
+        for (Set set : sets) {
+            if (set instanceof Pair) {
+                return (Pair)set;
+            }
+        }
+        return null;
+    }
 }
