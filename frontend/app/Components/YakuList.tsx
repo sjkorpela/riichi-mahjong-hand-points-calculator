@@ -8,6 +8,7 @@ interface YakuListProps {
 export default function YakuList({response}: YakuListProps) {
 
     if (!response) {return null; }
+    if (!response.yaku) { return null;}
 
 
 
