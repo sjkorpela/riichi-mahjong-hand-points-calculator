@@ -162,7 +162,7 @@ export default function Home() {
 
     return (
         <div className="min-w-full bg-green-400 flex justify-center p-20">
-            <div className="flex flex-col min-h-screen min-w-[900px] items-center justify-center gap-3 bg-emerald-400">
+            <div className="flex flex-col min-h-screen min-w-[900px] items-center justify-center gap-3 ">
                 <div className="flex gap-3">
 
                     <div className={`my-box ${tileSelectFocus == "H" ? "selected" : "selectable"}`} onClick={() => setTileSelectFocus("H")}>
@@ -209,9 +209,6 @@ export default function Home() {
                         <div className={`my-box ${tileSelectFocus == "D" ? "selected" : "selectable"}`} onClick={() => setTileSelectFocus("D")}>
                             <h1 className="box-title pb-1">Dora</h1>
                             <DoraIndicators dora={dora} removeTileFromDora={removeTileFromDora} maxDora={maxDora}/>
-                        </div>
-                        <div className="my-box min-w-50">
-                            <h1 className="text-3xl text-white font-bold pb-1 text-center">Yaku</h1>
                         </div>
                         <YakuListErrorMessage handFull={handFull} winningTile={winningTile != null} response={response} />
                         <YakuList response={response}/>

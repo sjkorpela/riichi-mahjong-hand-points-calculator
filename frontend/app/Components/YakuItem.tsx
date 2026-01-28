@@ -3,11 +3,12 @@ import {ResponseYaku} from "@/app/Fetcher";
 import EmptyTile from "@/app/Components/EmptyTile";
 
 interface YakuItemProps {
-    yaku: ResponseYaku
+    yaku: ResponseYaku,
+    last: boolean
 }
 
 
-export default function YakuItem({yaku}: YakuItemProps) {
+export default function YakuItem({yaku, last}: YakuItemProps) {
 
     function nameTag() {
         if (yaku.englishName) {
@@ -52,6 +53,12 @@ export default function YakuItem({yaku}: YakuItemProps) {
         }
     }
 
+    function divider() {
+        return (
+            <div className="bg-green-500 min-h-1 min-w-full mt-3 rounded-full"/>
+        )
+    }
+
     return (
         <div className="max-w-140 min-w-100 p-2">
             <div>
@@ -60,10 +67,10 @@ export default function YakuItem({yaku}: YakuItemProps) {
                     <h1 className="text-2xl text-white font-bold pb-1 text-end grow">{han()}</h1>
 
                 </div>
-
                 <h2 className="text-1xl text-white font-bold pb-1 text-wrap">
                     {yaku.description}
                 </h2>
+                {!last ? divider() : null}
             </div>
         </div>
     )

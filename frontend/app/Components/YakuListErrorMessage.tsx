@@ -10,8 +10,8 @@ export default function YakuListErrorMessage({handFull, winningTile, response}: 
 
     function formatText(text: string) {
         return (
-            <div className="p-2 bg-green-600 rounded-xl">
-                <h1 className="text-xl decoration-2 text-white font-bold">{text}</h1>
+            <div className="my-box">
+                <h1 className="text-xl decoration-2 text-white font-bold text-wrap">{text}</h1>
             </div>
         )
     }
@@ -21,7 +21,7 @@ export default function YakuListErrorMessage({handFull, winningTile, response}: 
     } else if (handFull && winningTile && response && response.status == 400) {
         return formatText("Your hand doesn't seem to be valid.");
     } if (handFull && winningTile && response && response.status == 200 && response.yaku.length == 0) {
-        return formatText("Your hand doesn't fulfill any Yaku. Did you forget to check Riichi?")
+        return formatText("Your hand doesn't fulfill any Yaku.")
     } else if (handFull && winningTile && response && response.status == 200) {
         return null;
     } else if (handFull && winningTile && !response) {
