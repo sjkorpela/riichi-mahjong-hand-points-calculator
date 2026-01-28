@@ -90,6 +90,20 @@
     "closedHan": 1,
     "openHan": 1
   },
+  "Dora": {
+    "englishName": "",
+    "japaneseName": "Dora",
+    "description": "A special tile worth 1 han in hand. Indicated by Dora indicators.",
+    "closedHan": 1,
+    "openHan": 1
+  },
+  "AkaDora": {
+    "englishName": "",
+    "japaneseName": "Dora",
+    "description": "A special red 5 tile worth 1 han in hand.",
+    "closedHan": 1,
+    "openHan": 1
+  },
   "DoubleRiichi": {
     "englishName": "",
     "japaneseName": "Double Riichi",

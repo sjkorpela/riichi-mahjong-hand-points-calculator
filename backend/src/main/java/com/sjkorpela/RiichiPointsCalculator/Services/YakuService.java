@@ -769,4 +769,23 @@ public class YakuService {
             }
         }
     }
+
+    public static void checkForDora(PointsRequest request) {
+        List<Tile> doraTiles = List.of(request.getDora());
+        List<Tile> hand = request.getFullHandAsList();
+
+        int doraCount = 0;
+        int akaDoraCount = 0;
+
+        for (Tile tile : hand) {
+            if (tile.getRed()) { akaDoraCount++; }
+            for (Tile dora : doraTiles) {
+                if (dora.isNext(tile)) {
+                    doraCount++;
+                } else if (dora.getSuit() == tile.getSuit() && dora.getValue() == 9 && tile.getValue() == 1) {
+                    doraCount++;
+                }
+            }
+        }
+    }
 }

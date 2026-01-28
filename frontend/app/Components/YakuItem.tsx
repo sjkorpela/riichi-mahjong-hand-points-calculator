@@ -62,14 +62,11 @@ export default function YakuItem({yaku, last}: YakuItemProps) {
     return (
         <div className="max-w-140 min-w-100 p-2">
             <div>
-                <div className="flex flex-wrap justify-between">
-                    {nameTag()}
-                    <h1 className="text-2xl text-white font-bold pb-1 text-end grow">{han()}</h1>
-
-                </div>
-                <h2 className="text-1xl text-white font-bold pb-1 text-wrap">
+                {nameTag()}
+                <h1 className="text-1xl text-white font-bold pb-1 text-wrap">
                     {yaku.description}
-                </h2>
+                </h1>
+                <h1 className="text-2xl text-white font-bold pb-1 text-end min-w-full">{han()}</h1>
                 {!last ? divider() : null}
             </div>
         </div>

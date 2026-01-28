@@ -12,15 +12,25 @@ public class PointsResponse {
 
     private final List<ResponseYaku> yaku;
     private final boolean openHand;
+    private final boolean yakuman;
 
     public PointsResponse(PointsRequest request) {
         this.yaku = new ArrayList<>();
         this.openHand = request.getOpenHand();
+        this.yakuman = request.getYakumanAchieved();
+
+        List<Yaku> allYakuman = Yaku.getYakuman();
 
         for (Yaku yaku : request.getYaku()) {
-            this.yaku.add(JsonService.getYakuDetails(yaku, request.getOpenHand()));
+            if (!this.yakuman || allYakuman.contains(yaku)) {
+                this.yaku.add(JsonService.getYakuDetails(yaku, request.getOpenHand()));
+            }
         }
 
-        this.yaku.addAll(request.getResponseYaku());
+        for (ResponseYaku yaku : request.getResponseYaku()) {
+            if (!this.yakuman || allYakuman.contains(yaku.getYaku())) {
+                this.yaku.add(yaku);
+            }
+        }
     }
 }

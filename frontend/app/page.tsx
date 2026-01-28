@@ -178,7 +178,7 @@ export default function Home() {
 
 
                 <div className="flex flex-wrap items-start gap-3">
-                    <div className="flex flex-col gap-3 min-w-100">
+                    <div className="flex flex-col gap-3 max-w-[540px]">
                         <div className="my-box">
                             <div className="flex justify-between pb-4">
                                 <h1 className="box-title">Tile Select</h1>
