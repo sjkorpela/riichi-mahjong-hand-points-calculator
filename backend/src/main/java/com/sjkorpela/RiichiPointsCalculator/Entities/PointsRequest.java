@@ -50,6 +50,7 @@ public class PointsRequest {
 
     private Integer fu;
     private List<Yaku> yaku;
+    private List<ResponseYaku> responseYaku;
     private Boolean yakumanAchieved;
     private Suit flushSuit;
     private List<PossibleHand> possibleHands;
@@ -57,6 +58,7 @@ public class PointsRequest {
     public void initializeOtherFields() {
         fu = 0;
         yaku = new ArrayList<Yaku>();
+        responseYaku = new ArrayList<ResponseYaku>();
         yakumanAchieved = false;
         flushSuit = null;
         possibleHands = new ArrayList<>();

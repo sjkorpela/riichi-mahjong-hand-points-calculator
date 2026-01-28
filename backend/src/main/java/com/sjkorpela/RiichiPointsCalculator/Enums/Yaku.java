@@ -47,7 +47,7 @@ public enum Yaku {
     FourLittleWinds,
     FourConcealedTriplets,
     FourQuads,
-    ALlHonors,
+    AllHonors,
     AllGreen,
     AllTerminals,
     ThirteenOrphans,

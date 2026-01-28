@@ -6,11 +6,10 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 
 
 public class JsonService {
-    public static ResponseYaku getYakuDetail(Yaku yaku, boolean open) {
+    public static ResponseYaku getYakuDetails(Yaku yaku, boolean open) {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(new File("src/main/resources/yaku.json"));
         JsonNode entry = jsonNode.get(yaku.toString());

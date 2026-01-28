@@ -26,6 +26,7 @@ export interface ResponseYaku {
 }
 
 export interface YakuResponse {
+    status: number,
     yaku: ResponseYaku[],
     openHand: boolean,
 }
@@ -33,17 +34,37 @@ export interface YakuResponse {
 export class Fetcher {
 
     public static async getYaku(request: FetchYakuProps): Promise<YakuResponse> {
-        console.log("Fetching with:", request)
-        const raw = await fetch('http://localhost:8080/points', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(request)
-        });
-        const response: YakuResponse = await raw.json();
-        console.log("Response: ", response);
-        return response;
+        console.log("Fetching with: ", request)
+        try {
+            const raw = await fetch('http://localhost:8080/points', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(request)
+            });
+            const response: YakuResponse = await raw.json();
+            response.status = raw.status;
+            console.log("Response: ", response);
+            return response;
+        } catch (error) {
+            console.log("Error: ", error);
+            if (error instanceof SyntaxError) {
+                return {
+                    status: 400,
+                    yaku: [],
+                    openHand: false,
+                }
+            } else if (error instanceof TypeError) {
+                return {
+                    status: 500,
+                    yaku: [],
+                    openHand: false,
+                }
+            }
+        }
+        return Promise.reject();
+
     }
 }

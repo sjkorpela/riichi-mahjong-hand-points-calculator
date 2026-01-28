@@ -25,6 +25,7 @@ import Boolean from "@/app/Components/Boolean";
 import DoraIndicators from "@/app/Components/DoraIndicators";
 import {Fetcher, YakuResponse} from "@/app/Fetcher";
 import YakuList from "@/app/Components/YakuList";
+import YakuListErrorMessage from "@/app/Components/YakuListErrorMessage";
 
 export default function Home() {
 
@@ -57,11 +58,11 @@ export default function Home() {
     const [roundWind, setRoundWind] = useState("we");
     const [seatWind, setSeatWind] = useState("we");
 
+    const [tsumo, setTsumo] = useState<boolean>(false);
     const [openHand, setOpenHand] = useState<boolean>(false);
     const [riichi, setRiichi] = useState<boolean>(false);
     const [ippatsu, setIppatsu] = useState<boolean>(false);
     const [doubleRiichi, setDoubleRiichi] = useState<boolean>(false);
-    const [tsumo, setTsumo] = useState<boolean>(false);
     const [lastTile, setLastTile] = useState<boolean>(false);
     const [afterKan, setAfterKan] = useState<boolean>(false);
     const [blessedHand, setBlessedHand] = useState<boolean>(false);
@@ -136,8 +137,13 @@ export default function Home() {
             }
         }
 
-        const response: YakuResponse = await Fetcher.getYaku(calculationInfo);
-        setResponse(response);
+        try {
+            const result: YakuResponse = await Fetcher.getYaku(calculationInfo);
+            console.log("Result: ", result);
+            setResponse(result);
+        } catch {
+            setResponse(null);
+        }
     }
 
     const onFullHand = useEffectEvent(() => {
@@ -145,10 +151,10 @@ export default function Home() {
     })
 
     useEffect(() => {
-        if (handSize == maxHandSize && winningTile != null) {
+        if (handFull && winningTile != null) {
             onFullHand();
         }
-    }, [handSize, spentTiles, winningTile])
+    }, [handFull, spentTiles, winningTile, roundWind, seatWind, tsumo, openHand, riichi, ippatsu, doubleRiichi, lastTile, afterKan, blessedHand]);
 
     return (
         <div className="min-w-full bg-green-400 flex justify-center p-20">
@@ -223,12 +229,11 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className="gap-3 min-w-full flex flex-col">
-                    <div className="p-3 bg-green-600 rounded-xl min-w-full">
-                        <h1 className="text-3xl text-white font-bold pb-1 text-center">Yaku</h1>
-                    </div>
-                    <YakuList response={response}/>
+                <div className="p-2 bg-green-600 rounded-xl min-w-50">
+                    <h1 className="text-3xl text-white font-bold pb-1 text-center">Yaku</h1>
                 </div>
+                <YakuListErrorMessage handFull={handFull} winningTile={winningTile != null} response={response} />
+                <YakuList response={response}/>
             </div>
         </div>
     );
