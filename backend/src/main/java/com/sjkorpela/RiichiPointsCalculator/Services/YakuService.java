@@ -133,6 +133,9 @@ public class YakuService {
             }
         }
 
+        // If no numbered tiles, no flush...
+        if (usedTiles.isEmpty()) { return; }
+
         // Save for later, nts: check if is ever used...
         request.setFlushSuit(suit);
 

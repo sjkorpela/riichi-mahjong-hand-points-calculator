@@ -1,7 +1,5 @@
 "use client";
 
-import ModeSelect from "@/app/Components/ModeSelect";
-
 const tileTypes = ["s1", "s2", "s3", "s4", "s5", "s5r", "s6", "s7", "s8", "s9", "m1", "m2", "m3", "m4", "m5", "m5r", "m6", "m7", "m8", "m9", "p1", "p2", "p3", "p4", "p5", "p5r", "p6", "p7", "p8", "p9", "we", "ws", "ww", "wn", "dg", "dr", "dw", ];
 
 // better way to do this??
@@ -15,10 +13,12 @@ const maxDora = 10;
 const maxTileCount = 4;
 const red5TileCount = 1;
 
+import "@/app/CSS/Page.css";
 import {useEffect, useEffectEvent, useState} from "react";
 import Hand from "@/app/Components/Hand";
 import WinningTile from "@/app/Components/WinningTile";
 import TileButton from "@/app/Components/TileButton";
+import ModeSelect from "@/app/Components/ModeSelect";
 import FancyBoolean from "@/app/Components/FancyBoolean";
 import WindSelect from "@/app/Components/WindSelect";
 import Boolean from "@/app/Components/Boolean";
@@ -28,6 +28,8 @@ import YakuList from "@/app/Components/YakuList";
 import YakuListErrorMessage from "@/app/Components/YakuListErrorMessage";
 
 export default function Home() {
+
+    // region states & functions
 
     const [tileSelectFocus, setTileSelectFocus] = useState<string | null>("H");
 
@@ -156,24 +158,30 @@ export default function Home() {
         }
     }, [handFull, spentTiles, winningTile, roundWind, seatWind, tsumo, openHand, riichi, ippatsu, doubleRiichi, lastTile, afterKan, blessedHand]);
 
+    // endregion
+
     return (
         <div className="min-w-full bg-green-400 flex justify-center p-20">
-            <div className="flex flex-col min-h-screen max-w-fit items-center justify-center gap-3">
+            <div className="flex flex-col min-h-screen min-w-[900px] items-center justify-center gap-3 bg-emerald-400">
                 <div className="flex gap-3">
-                    <div className={`p-3 bg-green-600 rounded-xl ${tileSelectFocus == "H" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("H")}>
-                        <h1 className="text-2xl text-white font-bold text-start pb-4">Hand {handSize}/{maxHandSize}</h1>
+
+                    <div className={`my-box ${tileSelectFocus == "H" ? "selected" : "selectable"}`} onClick={() => setTileSelectFocus("H")}>
+                        <h1 className="box-title pb-4">Hand {handSize}/{maxHandSize}</h1>
                         <Hand hand={hand} removeTileFromHand={removeTileFromHand} maxHandSize={maxHandSize} />
                     </div>
-                    <div className={`flex flex-col items-center p-3 bg-green-600 rounded-xl ${tileSelectFocus == "W" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("W")}>
-                        <h1 className="text-2xl text-white font-bold text-start pb-1">Winning Tile</h1>
+                    <div className={`flex flex-col items-center my-box ${tileSelectFocus == "W" ? "selected" : "selectable"}`} onClick={() => setTileSelectFocus("W")}>
+                        <h1 className="box-title pb-1">Winning Tile</h1>
                         <WinningTile face={winningTile} removeTileFromWinning={removeTileFromWinning} />
                     </div>
+
                 </div>
+
+
                 <div className="flex flex-wrap items-start gap-3">
-                    <div className="flex flex-col gap-3">
-                        <div className="p-3 bg-green-600 rounded-xl">
+                    <div className="flex flex-col gap-3 min-w-100">
+                        <div className="my-box">
                             <div className="flex justify-between pb-4">
-                                <h1 className="text-2xl text-white font-bold">Tile Select</h1>
+                                <h1 className="box-title">Tile Select</h1>
                                 <ModeSelect options={["H", "W", "D"]} activeMode={tileSelectFocus} setMode={(mode) => setTileSelectFocus(mode)} />
                             </div>
                             <div className="grid grid-cols-10 gap-1">
@@ -198,28 +206,33 @@ export default function Home() {
                                 })}
                             </div>
                         </div>
-                        <div className={`p-3 bg-green-600 rounded-xl ${tileSelectFocus == "D" ? "outline-white outline-4" : "outline-white outline-0 hover:outline-3 outline-dashed"}`} onClick={() => setTileSelectFocus("D")}>
-                            <h1 className="text-2xl text-white font-bold pb-1">Dora</h1>
+                        <div className={`my-box ${tileSelectFocus == "D" ? "selected" : "selectable"}`} onClick={() => setTileSelectFocus("D")}>
+                            <h1 className="box-title pb-1">Dora</h1>
                             <DoraIndicators dora={dora} removeTileFromDora={removeTileFromDora} maxDora={maxDora}/>
                         </div>
+                        <div className="my-box min-w-50">
+                            <h1 className="text-3xl text-white font-bold pb-1 text-center">Yaku</h1>
+                        </div>
+                        <YakuListErrorMessage handFull={handFull} winningTile={winningTile != null} response={response} />
+                        <YakuList response={response}/>
                     </div>
                     <div className="flex flex-col gap-3">
-                        <div className="p-3 bg-green-600 rounded-xl justify-center">
-                            <h1 className="text-2xl text-white font-bold pb-1">Win Declaration</h1>
+                        <div className="my-box justify-center">
+                            <h1 className="box-title pb-1">Win Declaration</h1>
                             <FancyBoolean trueOption={"Tsumo"} falseOption={"Ron"} bool={tsumo} updateBool={() => setTsumo(!tsumo)} flipOptions={true}/>
                         </div>
-                        <div className="p-3 bg-green-600 rounded-xl justify-center">
-                            <h1 className="text-2xl text-white font-bold pb-1">Hand State</h1>
+                        <div className="my-box justify-center">
+                            <h1 className="box-title pb-1">Hand State</h1>
                             <FancyBoolean trueOption={"Open"} falseOption={"Closed"} bool={openHand} updateBool={() => setOpenHand(!openHand)} flipOptions={true}/>
                         </div>
-                        <div className="p-3 bg-green-600 rounded-xl">
-                            <h1 className="text-2xl text-white font-bold pb-1">Round Wind</h1>
+                        <div className="my-box">
+                            <h1 className="box-title pb-1">Round Wind</h1>
                             <WindSelect wind={roundWind} updateWind={setRoundWind}/>
-                            <h1 className="text-2xl text-white font-bold pb-1">Seat Wind</h1>
+                            <h1 className="box-title pb-1">Seat Wind</h1>
                             <WindSelect wind={seatWind} updateWind={setSeatWind}/>
                         </div>
-                        <div className="p-3 bg-green-600 rounded-xl">
-                            <h1 className="text-2xl text-white font-bold pb-1">Extra Han</h1>
+                        <div className="my-box">
+                            <h1 className="box-title pb-1">Extra Han</h1>
                             <Boolean name={"Riichi"} bool={riichi} updateBool={() => setRiichi(!riichi)} blocked={openHand}/>
                             <Boolean name={"Ippatsu"} bool={ippatsu} updateBool={() => setIppatsu(!ippatsu)} blocked={openHand || !riichi}/>
                             <Boolean name={"Double Riichi"} bool={doubleRiichi} updateBool={() => setDoubleRiichi(!doubleRiichi)} blocked={openHand || !riichi}/>
@@ -229,11 +242,6 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className="p-2 bg-green-600 rounded-xl min-w-50">
-                    <h1 className="text-3xl text-white font-bold pb-1 text-center">Yaku</h1>
-                </div>
-                <YakuListErrorMessage handFull={handFull} winningTile={winningTile != null} response={response} />
-                <YakuList response={response}/>
             </div>
         </div>
     );

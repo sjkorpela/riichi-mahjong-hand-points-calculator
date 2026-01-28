@@ -196,7 +196,7 @@
     "openHan": 5
   },
   "BlessedHand": {
-    "englishName": "Blessing of the Heaven/Earth",
+    "englishName": "Blessing of Heaven/Earth",
     "japaneseName": "Tenhou / Chiihou",
     "description": "Starting the game with a complete hand, or drawing a winning tile as your first draw, and before any tile calls.",
     "closedHan": 13,
@@ -205,7 +205,7 @@
   "BigThreeDragons": {
     "englishName": "Big Three Dragons",
     "japaneseName": "Daisangen",
-    "description": "A hand with a triplet or quads of all three Dragons.",
+    "description": "A hand with triplets or quads of all three Dragons.",
     "closedHan": 13,
     "openHan": 13
   },
@@ -289,7 +289,7 @@
   "FourBigWinds": {
     "englishName": "Four Big Winds",
     "japaneseName": "Daisuushii",
-    "description": "A hand with a triplet or quads of all four Winds.",
+    "description": "A hand with triplets or quads of all four Winds.",
     "closedHan": 26,
     "openHan": 26
   }
