@@ -1,10 +1,8 @@
 package com.sjkorpela.RiichiPointsCalculator.Services;
 
 import com.sjkorpela.RiichiPointsCalculator.Entities.*;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Suit;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Tile;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Type;
-import com.sjkorpela.RiichiPointsCalculator.Enums.Wind;
+import com.sjkorpela.RiichiPointsCalculator.Entities.Set;
+import com.sjkorpela.RiichiPointsCalculator.Enums.*;
 
 import java.util.*;
 
@@ -72,6 +70,33 @@ public class HandService {
             CheckingHand nextCheck = new CheckingHand(hand);
             nextCheck.addSequence(currentTile, tiles.get(secondIndex), tiles.get(thirdIndex), currentIndex, secondIndex, thirdIndex);
             findAllPossibleHands(nextCheck, readyHands);
+        }
+    }
+
+    public static void formatUniqueHand(PointsRequest request) {
+        if (request.hasYaku(Yaku.SevenPairs)) {
+            List<Set> sets = new ArrayList<>();
+            for (Tile tile : request.getFullHandAsMap().keySet()) {
+                sets.add(new Pair(tile, request.getFullHandAsList().indexOf(tile),
+                        request.getFullHandAsList().lastIndexOf(tile)));
+            }
+            request.getPossibleHands().add(new PossibleHand(
+                    sets,
+                    new ArrayList<>(),
+                    request.getFu(),
+                    request.getOpenHand(),
+                    request.getFullHandAsList().lastIndexOf(request.getWinningTile())
+            ));
+        }
+
+        if (request.hasYaku(Yaku.ThirteenOrphans) || request.hasYaku(Yaku.ThirteenWaitThirteenOrphans)) {
+            request.getPossibleHands().add(new PossibleHand(
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    request.getFu(),
+                    request.getOpenHand(),
+                    request.getFullHandAsList().lastIndexOf(request.getWinningTile())
+            ));
         }
     }
 

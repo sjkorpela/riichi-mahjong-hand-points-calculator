@@ -26,7 +26,6 @@ public class PointsController {
     @PostMapping("/points")
     public PointsResponse CalculatePoints(@RequestBody PointsRequest request) {
           ValidationService.validatePointsRequest(request);
-          request.initializeOtherFields();
           PointsService.getYaku(request);
           return new PointsResponse(request);
     }

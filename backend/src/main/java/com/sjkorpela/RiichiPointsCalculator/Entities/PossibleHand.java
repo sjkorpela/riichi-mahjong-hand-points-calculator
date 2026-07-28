@@ -27,6 +27,20 @@ public class PossibleHand {
         this.responseYaku = new ArrayList<>();
     }
 
+    public PossibleHand(
+            List<Set> sets,
+            List<ResponseYaku> yaku,
+            Integer fu,
+            boolean openHand,
+            int winningIndex
+    ) {
+        this.sets = sets;
+        this.responseYaku = yaku;
+        this.fu = fu;
+        this.openHand = openHand;
+        this.winningIndex = winningIndex;
+    }
+
     public List<Sequence> getSequences() {
         List<Sequence> sequences = new ArrayList<>();
         for (Set set : sets) {

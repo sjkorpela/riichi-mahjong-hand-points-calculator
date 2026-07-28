@@ -49,21 +49,12 @@ public class PointsRequest {
     @NonNull private Boolean openHand;
     @NonNull private HashMap<String, Boolean> flags;
 
-    private List<Yaku> yaku;
-    private List<ResponseYaku> responseYaku;
-    private Boolean yakumanAchieved;
-    private Suit flushSuit;
-    private List<PossibleHand> possibleHands;
-    private Integer fu;
-
-    public void initializeOtherFields() {
-        fu = 0;
-        yaku = new ArrayList<Yaku>();
-        responseYaku = new ArrayList<ResponseYaku>();
-        yakumanAchieved = false;
-        flushSuit = null;
-        possibleHands = new ArrayList<>();
-    }
+    private List<Yaku> yaku = new ArrayList<Yaku>();
+    private List<ResponseYaku> responseYaku = new ArrayList<ResponseYaku>();
+    private Boolean yakumanAchieved = false;
+    private Suit flushSuit = null;
+    private List<PossibleHand> possibleHands = new ArrayList<>();
+    private Integer fu = 0;
 
     public List<Tile> getFullHandAsList() {
         List<Tile> list = new ArrayList<>();

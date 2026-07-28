@@ -1,1 +1,3 @@
-# riichi-mahjong-hand-points-calculator
+# Riichi Mahjong Points Calculator #
+
+Project description.

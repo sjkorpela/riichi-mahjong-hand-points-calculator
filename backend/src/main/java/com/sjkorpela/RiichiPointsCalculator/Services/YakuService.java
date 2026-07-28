@@ -297,7 +297,6 @@ public class YakuService {
             }
         }
 
-//        request.getYaku().add(Yaku.AllTriplets);
         request.getResponseYaku().add(new ResponseYaku(
                 Yaku.AllTriplets,
                 request.getFullHandAsList(),
@@ -336,7 +335,7 @@ public class YakuService {
     }
 
     /**
-     * All these Yaku are compatible with most other Yaku and require a closed hand:
+     * All these Yaku are compatible with most other Yaku but require a closed hand:
      * - Tsumo requires that the winning tile is self-drawn.
      * - Riichi requires that Riichi is called when in Tenpai.
      * - Double Riichi requires Riichi to be called on the player's first turn.
@@ -383,6 +382,17 @@ public class YakuService {
         }
     }
 
+    /**
+     * Pinfu is a Yaku that requires:
+     * - The hand to not gain Fu from it's tile.
+     * <p>
+     * See {@link com.sjkorpela.RiichiPointsCalculator.Services.HandService} function countFu for
+     * how Fu is counted.
+     * <p>
+     * Because of being Fu reliant, Pinfu is a hand specific Yaku.
+     *
+     * @param request object that the hands are checked from
+     */
     public static void checkForPinfu(PointsRequest request) {
         for (PossibleHand hand : request.getPossibleHands()) {
             int winFu;

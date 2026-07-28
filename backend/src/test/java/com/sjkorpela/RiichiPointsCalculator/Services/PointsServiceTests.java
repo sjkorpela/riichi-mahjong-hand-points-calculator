@@ -44,7 +44,6 @@ public class PointsServiceTests {
         flags.put("riichi", true);
         request.setFlags(flags);
 
-        request.initializeOtherFields();
         PointsService.calculatePoints(request);
         PointsResponse response = new PointsResponse(request);
 
@@ -91,7 +90,6 @@ public class PointsServiceTests {
         HashMap<String, Boolean> flags = new HashMap<>();
         request.setFlags(flags);
 
-        request.initializeOtherFields();
         PointsService.calculatePoints(request);
         PointsResponse response = new PointsResponse(request);
 
@@ -140,7 +138,6 @@ public class PointsServiceTests {
         flags.put("riichi", true);
         request.setFlags(flags);
 
-        request.initializeOtherFields();
         PointsService.calculatePoints(request);
         PointsResponse response = new PointsResponse(request);
 
@@ -188,7 +185,6 @@ public class PointsServiceTests {
         HashMap<String, Boolean> flags = new HashMap<>();
         request.setFlags(flags);
 
-        request.initializeOtherFields();
         PointsService.calculatePoints(request);
         PointsResponse response = new PointsResponse(request);
 
@@ -236,7 +232,6 @@ public class PointsServiceTests {
         flags.put("riichi", true);
         request.setFlags(flags);
 
-        request.initializeOtherFields();
         PointsService.calculatePoints(request);
         PointsResponse response = new PointsResponse(request);
 
@@ -284,7 +279,6 @@ public class PointsServiceTests {
         HashMap<String, Boolean> flags = new HashMap<>();
         request.setFlags(flags);
 
-        request.initializeOtherFields();
         PointsService.calculatePoints(request);
         PointsResponse response = new PointsResponse(request);
 
@@ -332,7 +326,6 @@ public class PointsServiceTests {
         HashMap<String, Boolean> flags = new HashMap<>();
         request.setFlags(flags);
 
-        request.initializeOtherFields();
         PointsService.calculatePoints(request);
         PointsResponse response = new PointsResponse(request);
 
